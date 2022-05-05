@@ -1,4 +1,4 @@
-grammar GLang;
+grammar Savepoint;
 
 program
  : statement+ EOF

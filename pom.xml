@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.glang.visitor</groupId>
-    <artifactId>glang</artifactId>
+    <groupId>org.savepoint.visitor</groupId>
+    <artifactId>savepoint</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -79,7 +79,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.glang.visitor.GLang</mainClass>
+                                    <mainClass>org.savepoint.visitor.Savepoint</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

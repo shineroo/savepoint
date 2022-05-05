@@ -1,11 +1,11 @@
-package org.glang.visitor;
+package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class GLang {
+public class Savepoint {
     public static void main(String[] args) {
         try {
             execute(CharStreams.fromFileName(args[0]));
@@ -15,12 +15,12 @@ public class GLang {
     }
 
     public static Object execute(CharStream stream) {
-        GLangLexer lexer = new GLangLexer(stream);
-        GLangParser parser = new GLangParser(new CommonTokenStream(lexer));
+        SavepointLexer lexer = new SavepointLexer(stream);
+        SavepointParser parser = new SavepointParser(new CommonTokenStream(lexer));
         parser.setBuildParseTree(true);
         ParseTree tree = parser.program();
 
-        GLangVisitorImpl visitor = new GLangVisitorImpl();
+        SavepointVisitorImpl visitor = new SavepointVisitorImpl();
         return visitor.visit(tree);
     }
 }

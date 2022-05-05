@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PrintConstantTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-    <module name="glang-visitor" />
+    <module name="savepoint" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.glang.visitor.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="PACKAGE_NAME" value="org.glang.visitor" />
-    <option name="MAIN_CLASS_NAME" value="org.glang.visitor.PrintConstantTest" />
+    <option name="PACKAGE_NAME" value="org.savepoint.visitor" />
+    <option name="MAIN_CLASS_NAME" value="org.savepoint.visitor.PrintConstantTest" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <method v="2">

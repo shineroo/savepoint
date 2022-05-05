@@ -1,4 +1,4 @@
-# glang-visitor
+# savepoint-visitor
 Simple programing language created with ANTLR4 Visitor.
 
 #### Tools
@@ -19,4 +19,4 @@ Build jar with:
 
 Run jar with:
 
-> java -jar target/glang-1.0.jar samples/test.glang
+> java -jar target/savepoint-1.0.jar samples/test.savepoint

@@ -1,4 +1,4 @@
-package org.glang.visitor;
+package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class PrintConstantTest {
                 5
                 """;
 
-        String actual = (String)GLang.execute(CharStreams.fromString(program));
+        String actual = (String)Savepoint.execute(CharStreams.fromString(program));
 
         assertEquals(expected, actual);
     }
@@ -34,7 +34,7 @@ public class PrintConstantTest {
                 5.5
                 """;
 
-        String actual = (String)GLang.execute(CharStreams.fromString(program));
+        String actual = (String)Savepoint.execute(CharStreams.fromString(program));
 
         assertEquals(expected, actual);
     }
@@ -50,7 +50,7 @@ public class PrintConstantTest {
                 true
                 """;
 
-        String actual = (String)GLang.execute(CharStreams.fromString(program));
+        String actual = (String)Savepoint.execute(CharStreams.fromString(program));
 
         assertEquals(expected, actual);
     }
@@ -66,7 +66,7 @@ public class PrintConstantTest {
                 5
                 """;
 
-        String actual = (String)GLang.execute(CharStreams.fromString(program));
+        String actual = (String)Savepoint.execute(CharStreams.fromString(program));
 
         assertEquals(expected, actual);
     }
