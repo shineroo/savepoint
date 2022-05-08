@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="savepoint" />
+        <module name="savepoint_v2" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="savepoint" target="17" />
+      <module name="savepoint_v2" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

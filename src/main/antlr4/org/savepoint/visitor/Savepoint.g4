@@ -36,19 +36,19 @@ systemFunctionCall
  : 'string' IDENTIFIER '=' STRING
  ;
 
- decimalDeclaration
-  : 'double' IDENTIFIER '=' DECIMAL
-  ;
+decimalDeclaration
+: 'double' IDENTIFIER '=' DECIMAL
+;
 
-  boolDeclaration
-   : 'bool' IDENTIFIER '=' BOOLEAN
-   ;
+boolDeclaration
+: 'bool' IDENTIFIER '=' BOOLEAN
+;
 
-   ifElseStatement: 'if' '(' expression ')' block 'else' block;
+ifElseStatement: 'if' '(' expression ')' block 'else' block;
 
-   block: '{' statement* '}';
+block: '{' statement* '}';
 
-   returnStatement: 'return' expression? ;
+returnStatement: 'return' expression? ;
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
@@ -76,21 +76,8 @@ booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
 
 stringBinaryOp : '..' ; //concat
 
-type
-: basicType
-;
 
-basicType
-: int
-| bool
-| string
-;
-
-int: 'int';
-bool: 'bool';
-string: 'string';
-
-PRINT : 'print';
+PRINT : 'WriteLine';
 
 INTEGER : '-'?[0-9]+ ;
 DECIMAL : '-'?[0-9]+ '.' [0-9]+ ;

@@ -2,7 +2,6 @@
   <configuration default="false" name="savepoint-1.0.jar" type="JarApplication">
     <option name="JAR_PATH" value="$PROJECT_DIR$/target/savepoint-1.0.jar" />
     <option name="PROGRAM_PARAMETERS" value="samples/test.savep" />
-    <option name="WORKING_DIRECTORY" value="F:\aqwe\2k2p\Programavimo Kalbu Teorija\project\savepoint" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <method v="2" />
   </configuration>
