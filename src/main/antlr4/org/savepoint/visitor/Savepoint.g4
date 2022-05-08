@@ -5,8 +5,15 @@ program
  ;
 
 statement
- : assignment
- | systemFunctionCall
+ : assignment';'
+ | systemFunctionCall';'
+ | variableDeclaration';'
+ | integerDeclaration';'
+ | stringDeclaration';'
+ | decimalDeclaration';'
+ | boolDeclaration';'
+ | ifElseStatement
+ | returnStatement';'
  ;
 
 assignment
@@ -16,6 +23,32 @@ assignment
 systemFunctionCall
  : PRINT '(' expression ')'                             #printFunctionCall
  ;
+
+ variableDeclaration
+ : 'var' IDENTIFIER '=' expression
+ ;
+
+ integerDeclaration
+ : 'int' IDENTIFIER '=' INTEGER
+ ;
+
+ stringDeclaration
+ : 'string' IDENTIFIER '=' STRING
+ ;
+
+ decimalDeclaration
+  : 'double' IDENTIFIER '=' DECIMAL
+  ;
+
+  boolDeclaration
+   : 'bool' IDENTIFIER '=' BOOLEAN
+   ;
+
+   ifElseStatement: 'if' '(' expression ')' block 'else' block;
+
+   block: '{' statement* '}';
+
+   returnStatement: 'return' expression? ;
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
@@ -28,6 +61,7 @@ expression
  | expression numericMultiOp expression                 #numericMultiOpExpression
  | expression numericAddOp expression                   #numericAddOpExpression
  | expression stringBinaryOp expression                 #stringBinaryOpExpression
+ | expression booleanCompareOp expression               #comparisonExpression
  ;
 
 booleanUnaryOp : '!' ;
@@ -38,12 +72,28 @@ numericMultiOp : '*' | '/' | '%' ;
 
 numericAddOp : '+' | '-' ;
 
+booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
+
 stringBinaryOp : '..' ; //concat
+
+type
+: basicType
+;
+
+basicType
+: int
+| bool
+| string
+;
+
+int: 'int';
+bool: 'bool';
+string: 'string';
 
 PRINT : 'print';
 
-INTEGER : [0-9]+ ;
-DECIMAL : [0-9]+ '.' [0-9]+ ;
+INTEGER : '-'?[0-9]+ ;
+DECIMAL : '-'?[0-9]+ '.' [0-9]+ ;
 BOOLEAN : 'true' | 'false' ;
 STRING : ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["] ;
 
