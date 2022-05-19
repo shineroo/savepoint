@@ -13,8 +13,9 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitPrintFunctionCall(SavepointParser.PrintFunctionCallContext ctx) {
         String text = visit(ctx.expression()).toString();
-        if(text.startsWith("\"") && text.endsWith("\""))
-            text = text.substring(1, text.length()-1);
+        //if(text.startsWith("\"") && text.endsWith("\""))
+         //   text = text.substring(1, text.length()-1);
+        text = text.replaceAll("\"", "");
         System.out.println(text);
         return null;
     }
@@ -47,7 +48,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object value = visit(ctx.expression());
         String varName = ctx.IDENTIFIER().getText();
         if(!evalType(type, value)) {
-            System.out.println("Object in incorrect format.");
+            System.out.println("Object in incorrect format."); //TODO: make this show something more
             System.exit(1);
         }
         this.symbols.put(varName, value);
@@ -60,7 +61,66 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         return symbols.get(ctx.IDENTIFIER().getText());
     }
 
-    public boolean evalType(String type, Object value)
+    @Override
+    public Object visitNumericAddOpExpression(SavepointParser.NumericAddOpExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        String thing1 = val1.toString();
+        String thing2 = val2.toString();
+        if(evalType("int", thing1) && evalType("int", thing2)) //TODO: make it so you can add/multiply ints with doubles
+            return switch (ctx.numericAddOp().getText())
+                    {
+                        case "+" -> (Integer)val1+(Integer) val2;
+                        case "-" -> (Integer)val1-(Integer) val2;
+                        default -> null;
+                    };
+        else if(evalType("double", thing1) && evalType("double", thing2))
+            return switch (ctx.numericAddOp().getText())
+                    {
+                        case "+" -> (Double)val1+(Double) val2;
+                        case "-" -> (Double)val1-(Double) val2;
+                        default -> null;
+                    };
+        else if(evalType("string", thing1) && evalType("string", thing2))
+            return switch (ctx.numericAddOp().getText())
+                    {
+                        case "+" -> (String)val1+(String) val2;
+                        default -> null;
+                    };
+        else return null;
+    }
+
+    @Override
+    public Object visitNumericMultiOpExpression(SavepointParser.NumericMultiOpExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        String thing1 = val1.toString();
+        String thing2 = val2.toString();
+        if(evalType("int", thing1) && evalType("int", thing2))
+            return switch (ctx.numericMultiOp().getText())
+                    {
+                        case "*" -> (Integer)val1*(Integer) val2;
+                        case "/" -> (Integer)val1/(Integer) val2;
+                        case "%" -> (Integer)val1%(Integer) val2;
+                        default -> null;
+                    };
+        else if(evalType("double", thing1) && evalType("double", thing2))
+            return switch (ctx.numericMultiOp().getText())
+                    {
+                        case "*" -> (Double)val1*(Double) val2;
+                        case "/" -> (Double)val1/(Double) val2;
+                        case "%" -> (Double)val1%(Double) val2;
+                        default -> null;
+                    };
+        else return null;
+    }
+
+    @Override
+    public Object visitParenthesesExpression(SavepointParser.ParenthesesExpressionContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    public boolean evalType(String type, Object value) //TODO: change this to switch or even into a better idea entirely
     {
         if(value==null)
             return false;
