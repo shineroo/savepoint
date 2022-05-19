@@ -1,1 +1,8 @@
-WriteLine(20);
+int a = 5;
+double b = 1234.124;
+string ar1 = "true";
+string test = "Asdf";
+bool boolas = true;
+int c = a;
+WriteLine(boolas);
+WriteLine(c);
