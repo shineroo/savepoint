@@ -1,6 +1,8 @@
 package org.savepoint.visitor;
 
 
+import org.antlr.v4.runtime.tree.RuleNode;
+
 import java.util.Stack;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
@@ -13,8 +15,6 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitPrintFunctionCall(SavepointParser.PrintFunctionCallContext ctx) {
         String text = visit(ctx.expression()).toString();
-        //if(text.startsWith("\"") && text.endsWith("\""))
-         //   text = text.substring(1, text.length()-1);
         text = text.replaceAll("\"", "");
         System.out.println(text);
         return null;
@@ -43,10 +43,6 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     public Object visitVariableDeclaration(SavepointParser.VariableDeclarationContext ctx) {
         String varName = ctx.IDENTIFIER().getText();
         Object value = visit(ctx.expression());
-
-        //if(!evalType(, value)) {
-        //    throw new RuntimeException("Object in incorrect format.");
-        //}
 
         this.currentScope.declareVariable(ctx.TYPE().getText(), varName, value);
         return null;
@@ -85,12 +81,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "-" -> (Double)val1-(Double) val2;
                         default -> null;
                     };
-        else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2))
-            return switch (ctx.numericAddOp().getText())
-                    {
-                        case "+" -> (String)val1+(String) val2;
-                        default -> null;
-                    };
+        else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+            if (ctx.numericAddOp().getText().equals("+"))
+                return val1 + (String) val2;
+            return null;
+        }
         else return null;
     }
 
@@ -134,7 +129,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLoop(SavepointParser.LoopContext ctx) {
+    public Object visitLoop(SavepointParser.LoopContext ctx) { //TODO: return is weird atm, not sure if there is a normal exit condition
         boolean condition = (boolean)visit(ctx.expression());
         Object val = new Object();
         while(condition)
@@ -145,6 +140,21 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    protected boolean shouldVisitNextChild(RuleNode node, Object currentResult) {
+        return !(currentResult instanceof ReturnValue);
+    }
 
+    @Override
+    public Object visitReturnStatement(SavepointParser.ReturnStatementContext ctx) {
+        if(ctx.expression() == null)
+        {
+            return new ReturnValue(null);
+        }
+        else
+        {
+            return new ReturnValue(this.visit(ctx.expression()));
+        }
+    }
 
 }

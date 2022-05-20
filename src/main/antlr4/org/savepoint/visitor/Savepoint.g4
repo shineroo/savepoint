@@ -1,24 +1,44 @@
 grammar Savepoint;
 
 program
- : statement+ EOF
+ : line+ EOF
+ ;
+
+ line
+ : functionDeclaration
+ | statement
  ;
 
 statement
  : variableDeclaration';'
  | assignment';'
+ | functionCall';'
  | systemFunctionCall';'
  | ifElseStatement
  | loop
  | returnStatement';'
  ;
 
+functionDeclaration
+: TYPE IDENTIFIER '(' paramList? ')' functionBody ;
+
+paramList : TYPE IDENTIFIER (',' TYPE IDENTIFIER)* ;
+
+functionBody : '{' statement* '}' ; //TODO: cannot return from the middle of the function
+
+returnStatement: 'return' expression? ;
+
+
 variableDeclaration
 : TYPE IDENTIFIER '=' expression;
+
 
 assignment
  : IDENTIFIER '=' expression
  ;
+
+functionCall
+: IDENTIFIER '(' expressionList? ')';
 
 systemFunctionCall
  : PRINT '(' expression ')'                             #printFunctionCall
@@ -29,12 +49,16 @@ ifElseStatement: 'if' '(' expression ')' block 'else' block;
 
 block: '{' statement* '}';
 
-returnStatement: 'return' expression? ;
+
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
 loop
 : LOOP '(' expression ')' block;
+
+
+expressionList
+: expression (',' expression)* ;
 
 expression
  : constant                                             #constantExpression
@@ -46,6 +70,7 @@ expression
  | expression numericAddOp expression                   #numericAddOpExpression
  | expression stringBinaryOp expression                 #stringBinaryOpExpression
  | expression booleanCompareOp expression               #comparisonExpression
+ | functionCall                                         #functionCallExpression
  ;
 
 booleanUnaryOp : '!' ;

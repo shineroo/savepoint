@@ -39,17 +39,29 @@ public class SavepointScope {
     {
         if(!isAlreadyDeclared(variableName))
             throw new SavepointVariableNotDeclaredException(variableName);
-        String type = symbols.get(variableName).b;
-        if(!evalType(type, value))
-            throw new SavepointVariableIncorrectFormat(variableName);
-        symbols.put(variableName, new Pair(value, type));
+
+        if(symbols.containsKey(variableName)) {
+            String type = symbols.get(variableName).b;
+            if (!evalType(type, value))
+                throw new SavepointVariableIncorrectFormat(variableName);
+            symbols.put(variableName, new Pair(value, type));
+        }
+        else {
+            assert parent != null;
+            parent.changeVariable(variableName, value);
+        }
     }
 
     public Object resolveVariable(String variableName)
     {
         if(!isAlreadyDeclared(variableName))
             throw new SavepointVariableNotDeclaredException(variableName);
-        return symbols.get(variableName).a;
+        if(symbols.containsKey(variableName))
+            return symbols.get(variableName).a;
+        else {
+            assert parent != null;
+            return parent.resolveVariable(variableName);
+        }
     }
 
     public boolean evalType(String type, Object value) //TODO: change this to switch or even into a better idea entirely
@@ -57,32 +69,29 @@ public class SavepointScope {
         if(value==null)
             return false;
         String thing = value.toString();
-        if(type.equals("int"))
-        {
-            try{ Integer.parseInt(thing);
-                return true;}
-            catch(Exception e){return false;}
+        switch (type) {
+            case "int":
+                try {
+                    Integer.parseInt(thing);
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            case "double":
+                try {
+                    Double.parseDouble(thing);
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            case "bool":
+                return thing.equals("true") || thing.equals("false");
+            case "string":
+                var thing2 = thing.toCharArray();
+                return thing2[0] == '\"' && thing2[thing2.length - 1] == '\"';
+            default:
+                return false;
         }
-        else if(type.equals("double"))
-        {
-            try{ Double.parseDouble(thing);
-                return true;}
-            catch(Exception e){return false;}
-        }
-        else if(type.equals("bool"))
-        {
-            if(thing.equals("true") || thing.equals("false"))
-                return true;
-            return false;
-        }
-        else if(type.equals("string"))
-        {
-            var thing2 = thing.toCharArray();
-            if(thing2[0]=='\"' && thing2[thing2.length-1]=='\"')
-                return true;
-            else return false;
-        }
-        else return false;
     }
 
 
