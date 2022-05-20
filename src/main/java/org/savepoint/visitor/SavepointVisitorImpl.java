@@ -125,25 +125,28 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
             return switch (ctx.booleanCompareOp().getText())
                     {
-                        case "==" -> ((Integer) val1).equals((Integer) val2);
-                        case "!=" -> !((Integer) val1).equals((Integer) val2);
+                        case "==" -> val1.equals(val2);
+                        case "!=" -> !val1.equals(val2);
                         case ">" -> ((Integer)val1) > ((Integer)val2);
                         case ">=" -> ((Integer)val1) >= ((Integer)val2);
                         case "<" -> ((Integer)val1) < ((Integer)val2);
                         case "<=" -> ((Integer)val1) <= ((Integer)val2);
                         default -> null;
                     };
-        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2))
+        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2)){
+            double first = Double.parseDouble(thing1);
+            double second = Double.parseDouble(thing2);
+
             return switch (ctx.booleanCompareOp().getText())
                     {
-                        case "==" -> ((Double) val1).equals((Double) val2);
-                        case "!=" -> !((Double) val1).equals((Double) val2);
-                        case ">" -> ((Double)val1) > ((Double)val2);
-                        case ">=" -> ((Double)val1) >= ((Double)val2);
-                        case "<" -> ((Double)val1) < ((Double)val2);
-                        case "<=" -> ((Double)val1) <= ((Double)val2);
+                        case "==" -> (first)==(second);
+                        case "!=" -> (first)!=(second);
+                        case ">" -> (first) > (second);
+                        case ">=" -> (first) >= (second);
+                        case "<" -> (first) < (second);
+                        case "<=" -> (first) <= (second);
                         default -> null;
-                    };
+                    };}
         else return null;
 
         /*if (getType(thing1) == getType(thing2)){  // maybe like this
@@ -167,12 +170,13 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     public Object visitIfElseStatement(SavepointParser.IfElseStatementContext ctx) {
         boolean value = (boolean)visit(ctx.expression());
         if (value) {
-            visit(ctx.block(0));
+            return visit(ctx.block(0));
         }
         else {
-            visit(ctx.block(1));
+            if(ctx.block(1)!=null)
+                return visit(ctx.block(1));
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -204,13 +208,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitReturnStatement(SavepointParser.ReturnStatementContext ctx) {
         if(ctx.expression() == null)
-        {
             return new ReturnValue(null);
-        }
         else
-        {
             return new ReturnValue(this.visit(ctx.expression()));
-        }
     }
+
+
 
 }

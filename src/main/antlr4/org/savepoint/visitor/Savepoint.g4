@@ -45,7 +45,7 @@ systemFunctionCall
  ;
 
 
-ifElseStatement: 'if' '(' expression ')' block 'else' block;
+ifElseStatement: 'if' '(' expression ')' block ('else' block)?;
 
 block: '{' statement* '}';
 
