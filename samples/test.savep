@@ -1,6 +1,4 @@
 int a = 1;
-while(true)
-{
-    int a=a+1;
-    WriteLine(a);
-}
+a = 5;
+a = "test";
+WriteLine(a);

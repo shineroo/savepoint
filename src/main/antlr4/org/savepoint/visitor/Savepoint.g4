@@ -5,15 +5,19 @@ program
  ;
 
 statement
- : assignment';'
+ : variableDeclaration';'
+ | assignment';'
  | systemFunctionCall';'
  | ifElseStatement
  | loop
  | returnStatement';'
  ;
 
+variableDeclaration
+: TYPE IDENTIFIER '=' expression;
+
 assignment
- : TYPE IDENTIFIER '=' expression
+ : IDENTIFIER '=' expression
  ;
 
 systemFunctionCall

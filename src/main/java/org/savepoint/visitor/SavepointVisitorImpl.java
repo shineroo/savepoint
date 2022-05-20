@@ -5,10 +5,14 @@ import org.antlr.v4.runtime.misc.Pair;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     private final Map<String, Object> symbols = new HashMap<>();
+
+    private final Stack<SavepointScope> scopeStack = new Stack<>();
+    private SavepointScope currentScope = new SavepointScope();
 
     @Override
     public Object visitPrintFunctionCall(SavepointParser.PrintFunctionCallContext ctx) {
@@ -40,25 +44,38 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         return null;
     }
 
-
     @Override
-    public Object visitAssignment(SavepointParser.AssignmentContext ctx)
-    {
-        String type = ctx.TYPE().getText();
+    public Object visitVariableDeclaration(SavepointParser.VariableDeclarationContext ctx) {
+        /*String type = ctx.TYPE().getText();
         Object value = visit(ctx.expression());
         String varName = ctx.IDENTIFIER().getText();
-        if(!evalType(type, value)) {
+
+        this.symbols.put(varName, value);
+        return null;*/
+
+        String varName = ctx.IDENTIFIER().getText();
+        Object value = visit(ctx.expression());
+
+        if(!evalType(ctx.TYPE().getText(), value)) {
             System.out.println("Object in incorrect format."); //TODO: make this show something more
             System.exit(1);
         }
-        this.symbols.put(varName, value);
+
+        this.currentScope.declareVariable(varName, value);
         return null;
     }
 
+    @Override
+    public Object visitAssignment(SavepointParser.AssignmentContext ctx) {
+        String varName = ctx.IDENTIFIER().getText();
+        Object value = visit(ctx.expression());
+        this.currentScope.changeVariable(varName, value);
+        return null;
+    }
 
     @Override
     public Object visitIdentifierExpression(SavepointParser.IdentifierExpressionContext ctx) {
-        return symbols.get(ctx.IDENTIFIER().getText());
+        return this.currentScope.resolveVariable(ctx.IDENTIFIER().getText());
     }
 
     @Override
@@ -122,7 +139,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitBlock(SavepointParser.BlockContext ctx) {
-        return super.visitBlock(ctx);
+        this.scopeStack.push(currentScope);
+        currentScope = new SavepointScope(currentScope);
+        super.visitBlock(ctx);
+        currentScope = scopeStack.pop();
+        return null;
     }
 
     @Override
