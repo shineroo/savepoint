@@ -1,8 +1,10 @@
 int a = 1;
 a = 15;
+double b = 24.54;
+b = b/a;
 if(2.5>=2)
 {
-    WriteLine(a);
+    WriteLine(b);
 }
 else
 {

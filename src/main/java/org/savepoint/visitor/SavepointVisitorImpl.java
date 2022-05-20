@@ -74,13 +74,16 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "-" -> (Integer)val1-(Integer) val2;
                         default -> null;
                     };
-        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2))
+        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2)){
+            double first = Double.parseDouble(thing1);
+            double second = Double.parseDouble(thing2);
+
             return switch (ctx.numericAddOp().getText())
                     {
-                        case "+" -> (Double)val1+(Double) val2;
-                        case "-" -> (Double)val1-(Double) val2;
+                        case "+" -> first+second;
+                        case "-" -> first-second;
                         default -> null;
-                    };
+                    };}
         else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
             if (ctx.numericAddOp().getText().equals("+"))
                 return val1 + (String) val2;
@@ -103,14 +106,17 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "%" -> (Integer)val1%(Integer) val2;
                         default -> null;
                     };
-        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2))
+        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2)){
+            double first = Double.parseDouble(thing1);
+            double second = Double.parseDouble(thing2);
+
             return switch (ctx.numericMultiOp().getText())
                     {
-                        case "*" -> (Double)val1*(Double) val2;
-                        case "/" -> (Double)val1/(Double) val2;
-                        case "%" -> (Double)val1%(Double) val2;
+                        case "*" -> first*second;
+                        case "/" -> first/second;
+                        case "%" -> first%second;
                         default -> null;
-                    };
+                    };}
         else return null;
     }
 
