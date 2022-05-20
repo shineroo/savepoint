@@ -1,4 +1,10 @@
 int a = 1;
-a = 5;
+a = 3;
+if(a>4)
+{
+    WriteLine(a);
+}
+else{
+    WriteLine(a+a);
+}
 //a = "test";
-WriteLine(a);

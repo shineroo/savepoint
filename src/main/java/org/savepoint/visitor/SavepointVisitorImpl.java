@@ -122,7 +122,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         String thing2 = val2.toString();
 
         // booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
-        if(evalType("int", thing1) && evalType("int", thing2))
+        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
             return switch (ctx.booleanCompareOp().getText())
                     {
                         case "==" -> ((Integer) val1).equals((Integer) val2);
@@ -133,7 +133,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "<=" -> ((Integer)val1) <= ((Integer)val2);
                         default -> null;
                     };
-        else if(evalType("double", thing1) && evalType("double", thing2))
+        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2))
             return switch (ctx.booleanCompareOp().getText())
                     {
                         case "==" -> ((Double) val1).equals((Double) val2);
