@@ -1,15 +1,11 @@
 package org.savepoint.visitor;
 
-import org.antlr.v4.runtime.misc.Pair;
 
-import java.security.KeyPair;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
-    private final Map<String, Object> symbols = new HashMap<>();
+    //private final Map<String, Object> symbols = new HashMap<>();
 
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
@@ -38,30 +34,21 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         else if(ctx.BOOLEAN() != null)
             return Boolean.parseBoolean(ctx.BOOLEAN().getText());
         else if(ctx.STRING() != null) {
-            String item = ctx.STRING().getText();
-            return item;
+            return ctx.STRING().getText();
         }
         return null;
     }
 
     @Override
     public Object visitVariableDeclaration(SavepointParser.VariableDeclarationContext ctx) {
-        /*String type = ctx.TYPE().getText();
-        Object value = visit(ctx.expression());
-        String varName = ctx.IDENTIFIER().getText();
-
-        this.symbols.put(varName, value);
-        return null;*/
-
         String varName = ctx.IDENTIFIER().getText();
         Object value = visit(ctx.expression());
 
-        if(!evalType(ctx.TYPE().getText(), value)) {
-            System.out.println("Object in incorrect format."); //TODO: make this show something more
-            System.exit(1);
-        }
+        //if(!evalType(, value)) {
+        //    throw new RuntimeException("Object in incorrect format.");
+        //}
 
-        this.currentScope.declareVariable(varName, value);
+        this.currentScope.declareVariable(ctx.TYPE().getText(), varName, value);
         return null;
     }
 
@@ -84,21 +71,21 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object val2 = visit(ctx.expression(1));
         String thing1 = val1.toString();
         String thing2 = val2.toString();
-        if(evalType("int", thing1) && evalType("int", thing2)) //TODO: make it so you can add/multiply ints with doubles
+        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2)) //TODO: make it so you can add/multiply ints with doubles
             return switch (ctx.numericAddOp().getText())
                     {
                         case "+" -> (Integer)val1+(Integer) val2;
                         case "-" -> (Integer)val1-(Integer) val2;
                         default -> null;
                     };
-        else if(evalType("double", thing1) && evalType("double", thing2))
+        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2))
             return switch (ctx.numericAddOp().getText())
                     {
                         case "+" -> (Double)val1+(Double) val2;
                         case "-" -> (Double)val1-(Double) val2;
                         default -> null;
                     };
-        else if(evalType("string", thing1) && evalType("string", thing2))
+        else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2))
             return switch (ctx.numericAddOp().getText())
                     {
                         case "+" -> (String)val1+(String) val2;
@@ -113,7 +100,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object val2 = visit(ctx.expression(1));
         String thing1 = val1.toString();
         String thing2 = val2.toString();
-        if(evalType("int", thing1) && evalType("int", thing2))
+        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
             return switch (ctx.numericMultiOp().getText())
                     {
                         case "*" -> (Integer)val1*(Integer) val2;
@@ -121,7 +108,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "%" -> (Integer)val1%(Integer) val2;
                         default -> null;
                     };
-        else if(evalType("double", thing1) && evalType("double", thing2))
+        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2))
             return switch (ctx.numericMultiOp().getText())
                     {
                         case "*" -> (Double)val1*(Double) val2;
@@ -213,7 +200,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         }
         return null;
     }
-
+    
     public boolean evalType(String type, Object value) //TODO: change this to switch or even into a better idea entirely
     {
         if(value==null)
