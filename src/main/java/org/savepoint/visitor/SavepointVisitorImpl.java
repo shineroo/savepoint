@@ -133,8 +133,64 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitComparisonExpression(SavepointParser.ComparisonExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        String thing1 = val1.toString();
+        String thing2 = val2.toString();
+
+        // booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
+        if(evalType("int", thing1) && evalType("int", thing2))
+            return switch (ctx.booleanCompareOp().getText())
+                    {
+                        case "==" -> ((Integer) val1).equals((Integer) val2);
+                        case "!=" -> !((Integer) val1).equals((Integer) val2);
+                        case ">" -> ((Integer)val1) > ((Integer)val2);
+                        case ">=" -> ((Integer)val1) >= ((Integer)val2);
+                        case "<" -> ((Integer)val1) < ((Integer)val2);
+                        case "<=" -> ((Integer)val1) <= ((Integer)val2);
+                        default -> null;
+                    };
+        else if(evalType("double", thing1) && evalType("double", thing2))
+            return switch (ctx.booleanCompareOp().getText())
+                    {
+                        case "==" -> ((Double) val1).equals((Double) val2);
+                        case "!=" -> !((Double) val1).equals((Double) val2);
+                        case ">" -> ((Double)val1) > ((Double)val2);
+                        case ">=" -> ((Double)val1) >= ((Double)val2);
+                        case "<" -> ((Double)val1) < ((Double)val2);
+                        case "<=" -> ((Double)val1) <= ((Double)val2);
+                        default -> null;
+                    };
+        else return null;
+
+        /*if (getType(thing1) == getType(thing2)){  // maybe like this
+            switch(getType(thing1)) {
+                case "int" -> {
+                    return switch (ctx.booleanCompareOp().getText()) {
+                        case "==" -> ((Integer) val1).equals((Integer) val2);
+                        default -> null;
+                    };
+                }
+            }
+        }*/
+    }
+
+    @Override
     public Object visitParenthesesExpression(SavepointParser.ParenthesesExpressionContext ctx) {
         return visit(ctx.expression());
+    }
+
+    @Override
+    public Object visitIfElseStatement(SavepointParser.IfElseStatementContext ctx) {
+        boolean value = (boolean)visit(ctx.expression());
+        if (value) {
+            visit(ctx.block(0));
+        }
+        else {
+            visit(ctx.block(1));
+        }
+        return null;
     }
 
     @Override
@@ -190,5 +246,4 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         }
         else return false;
     }
-
 }
