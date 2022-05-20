@@ -1,14 +1,6 @@
-double a = 5.5+5.5;
-double b = 1234.124;
-string ar1 = "true";
-string test = "Asdf";
-bool boolas = true;
-double c = a;
-//WriteLine(boolas);
-//WriteLine(c);
-int a = -8; //reik padaryt, kad nereiktu vel int rasyt kai antra kart ta pati
-//WriteLine(a);
-WriteLine("ant"+"anas");
-
-double antras = 2*2*2;
-WriteLine(antras);
+int a = 1;
+while(true)
+{
+    int a=a+1;
+    WriteLine(a);
+}

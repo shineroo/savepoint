@@ -120,6 +120,23 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         return visit(ctx.expression());
     }
 
+    @Override
+    public Object visitBlock(SavepointParser.BlockContext ctx) {
+        return super.visitBlock(ctx);
+    }
+
+    @Override
+    public Object visitLoop(SavepointParser.LoopContext ctx) {
+        boolean condition = (boolean)visit(ctx.expression());
+        Object val = new Object();
+        while(condition)
+        {
+            val = visit(ctx.block());
+            condition = (boolean) visit(ctx.expression());
+        }
+        return null;
+    }
+
     public boolean evalType(String type, Object value) //TODO: change this to switch or even into a better idea entirely
     {
         if(value==null)

@@ -8,6 +8,7 @@ statement
  : assignment';'
  | systemFunctionCall';'
  | ifElseStatement
+ | loop
  | returnStatement';'
  ;
 
@@ -27,6 +28,9 @@ block: '{' statement* '}';
 returnStatement: 'return' expression? ;
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
+
+loop
+: LOOP '(' expression ')' block;
 
 expression
  : constant                                             #constantExpression
@@ -55,6 +59,7 @@ stringBinaryOp : '..' ; //concat
 
 PRINT : 'WriteLine';
 
+LOOP : 'while';
 INTEGER : '-'?[0-9]+ ;
 DECIMAL : '-'?[0-9]+ '.' [0-9]+ ;
 BOOLEAN : 'true' | 'false' ;
