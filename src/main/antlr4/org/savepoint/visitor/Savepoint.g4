@@ -15,7 +15,8 @@ statement
  | functionCall';'
  | systemFunctionCall';'
  | ifElseStatement
- | loop
+ | loopF
+ | loopW
  | returnStatement';'
  | increment';'
  ;
@@ -55,8 +56,12 @@ increment: IDENTIFIER '++';
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
-loop
+loopF
+: FORLOOP '(' (statement | IDENTIFIER';') expression';'assignment ')' block;
+
+loopW
 : LOOP '(' expression ')' block;
+
 
 
 expressionList
@@ -91,6 +96,7 @@ stringBinaryOp : '..' ; //concat
 PRINT : 'WriteLine';
 
 LOOP : 'while';
+FORLOOP : 'for';
 INTEGER : '-'?[0-9]+ ;
 DECIMAL : '-'?[0-9]+ '.' [0-9]+ ;
 BOOLEAN : 'true' | 'false' ;

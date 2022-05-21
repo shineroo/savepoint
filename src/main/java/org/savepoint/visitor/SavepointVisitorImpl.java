@@ -3,20 +3,29 @@ package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.tree.RuleNode;
 
-import java.util.Stack;
+import java.util.*;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     //private final Map<String, Object> symbols = new HashMap<>();
 
+    private final StringBuilder SYSTEM_OUT = new StringBuilder();
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
+    private final Map<String, SavepointParser.FunctionDeclarationContext> functions=new HashMap<>();
+
+    @Override
+    public Object visitProgram(SavepointParser.ProgramContext ctx) {
+        super.visitProgram(ctx);
+        return SYSTEM_OUT.toString();
+    }
 
     @Override
     public Object visitPrintFunctionCall(SavepointParser.PrintFunctionCallContext ctx) {
         String text = visit(ctx.expression()).toString();
         text = text.replaceAll("\"", "");
         System.out.println(text);
+        SYSTEM_OUT.append(text).append("\n");
         return null;
     }
 
@@ -84,12 +93,13 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "-" -> first-second;
                         default -> null;
                     };}
-        else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+        else //if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+        {
             if (ctx.numericAddOp().getText().equals("+"))
-                return val1 + (String) val2;
+                return val1 + val2.toString();
             return null;
         }
-        else return null;
+        //else return null;
     }
 
     @Override
@@ -208,16 +218,34 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLoop(SavepointParser.LoopContext ctx) { //TODO: return is weird atm, not sure if there is a normal exit condition
+    public Object visitLoopW(SavepointParser.LoopWContext ctx) {
         boolean condition = (boolean)visit(ctx.expression());
-        Object val = new Object();
+        //Object val = new Object();
         while(condition)
         {
-            val = visit(ctx.block());
+            visit(ctx.block());
             condition = (boolean) visit(ctx.expression());
         }
         return null;
     }
+
+    @Override
+    public Object visitLoopF(SavepointParser.LoopFContext ctx) {
+        scopeStack.push(currentScope);
+        currentScope = new SavepointScope(currentScope);
+        try{visitStatement(ctx.statement());}
+        catch(NullPointerException ignored){}
+        boolean condition = (boolean)visit(ctx.expression());
+        while(condition)
+        {
+            visit(ctx.block());
+            visitAssignment(ctx.assignment());
+            condition = (boolean) visit(ctx.expression());
+        }
+        currentScope = scopeStack.pop();
+        return null;
+    }
+
 
     @Override
     protected boolean shouldVisitNextChild(RuleNode node, Object currentResult) {
@@ -232,6 +260,46 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             return new ReturnValue(this.visit(ctx.expression()));
     }
 
+    @Override
+    public Object visitFunctionDeclaration(SavepointParser.FunctionDeclarationContext ctx) {
+        String functionName=ctx.IDENTIFIER().getText();
+        this.functions.put(functionName, ctx);
+        return null;
+    }
 
+    @Override
+    public Object visitFunctionCall(SavepointParser.FunctionCallContext ctx) {
+        String functionName=ctx.IDENTIFIER().getText();
+        SavepointParser.FunctionDeclarationContext function = this.functions.get(functionName);
+        List<Object> arguments=new ArrayList<>();
+        if(ctx.expressionList()!=null){
+            for(var expr : ctx.expressionList().expression()){
+                arguments.add(this.visit(expr));
+            }
+        }
+        SavepointScope functionScope=new SavepointScope();
+        if(function.paramList()!=null){
+            for(int i=0; i<function.paramList().IDENTIFIER().size(); i++){
+                String paramName=function.paramList().IDENTIFIER(i).getText();
+                String type=function.paramList().TYPE(i).getText();
+                functionScope.declareVariable(type, paramName, arguments.get(i));
+            }
+        }
 
+        this.scopeStack.push(currentScope);
+        currentScope = functionScope;
+        ReturnValue value= (ReturnValue)this.visitFunctionBody(function.functionBody());
+        currentScope = scopeStack.pop();
+
+        return value.getValue() ;
+    }
+
+    @Override
+    public Object visitFunctionBody(SavepointParser.FunctionBodyContext ctx) {
+        Object value=super.visitFunctionBody(ctx);
+        if(value instanceof ReturnValue){
+            return value;
+        }
+        return new ReturnValue(null);
+    }
 }
