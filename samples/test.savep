@@ -20,4 +20,4 @@ int calc(int a, int b)
 
 int pirmas = 9;
 int antras = 3;
-calc(pirmas, antras);
+WriteLine(calc(pirmas, antras));
