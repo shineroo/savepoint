@@ -90,7 +90,6 @@ expression
  | expression booleanBinaryOp expression                #booleanBinaryOpExpression
  | expression numericMultiOp expression                 #numericMultiOpExpression
  | expression numericAddOp expression                   #numericAddOpExpression
- | expression stringBinaryOp expression                 #stringBinaryOpExpression
  | expression booleanCompareOp expression               #comparisonExpression
  | functionCall                                         #functionCallExpression
  | systemFunctionCall1                                  #systemFunctionCallExpression
@@ -106,7 +105,6 @@ numericAddOp : '+' | '-' ;
 
 booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
 
-stringBinaryOp : '..' ; //concat
 
 
 PRINT : 'WriteLine';

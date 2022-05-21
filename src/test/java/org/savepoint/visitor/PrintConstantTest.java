@@ -10,7 +10,7 @@ public class PrintConstantTest {
     @Test
     void print_integer_constant() {
         String program = """
-                print(5)
+                WriteLine(5);
                 """;
 
         String expected =
@@ -26,7 +26,7 @@ public class PrintConstantTest {
     @Test
     void print_decimal_constant() {
         String program = """
-                print(5.5)
+                WriteLine(5.5);
                 """;
 
         String expected =
@@ -42,7 +42,7 @@ public class PrintConstantTest {
     @Test
     void print_boolean_constant() {
         String program = """
-                print(true)
+                WriteLine(true);
                 """;
 
         String expected =
@@ -58,7 +58,7 @@ public class PrintConstantTest {
     @Test
     void print_string_constant() {
         String program = """
-                print("5")
+                WriteLine("5");
                 """;
 
         String expected =
