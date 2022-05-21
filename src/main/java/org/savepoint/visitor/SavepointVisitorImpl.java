@@ -3,7 +3,7 @@ package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.tree.RuleNode;
 
-import java.util.Stack;
+import java.util.*;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
@@ -11,6 +11,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
+    private final Map<String, SavepointParser.FunctionDeclarationContext> functions=new HashMap<>();
 
     @Override
     public Object visitPrintFunctionCall(SavepointParser.PrintFunctionCallContext ctx) {
@@ -219,6 +220,46 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             return new ReturnValue(this.visit(ctx.expression()));
     }
 
+    @Override
+    public Object visitFunctionDeclaration(SavepointParser.FunctionDeclarationContext ctx) {
+        String functionName=ctx.IDENTIFIER().getText();
+        this.functions.put(functionName, ctx);
+        return null;
+    }
 
+    @Override
+    public Object visitFunctionCall(SavepointParser.FunctionCallContext ctx) {
+        String functionName=ctx.IDENTIFIER().getText();
+        SavepointParser.FunctionDeclarationContext function = this.functions.get(functionName);
+        List<Object> arguments=new ArrayList<>();
+        if(ctx.expressionList()!=null){
+            for(var expr : ctx.expressionList().expression()){
+                arguments.add(this.visit(expr));
+            }
+        }
+        SavepointScope functionScope=new SavepointScope();
+        if(function.paramList()!=null){
+            for(int i=0; i<function.paramList().IDENTIFIER().size(); i++){
+                String paramName=function.paramList().IDENTIFIER(i).getText();
+                String type=function.paramList().TYPE(i).getText();
+                functionScope.declareVariable(type, paramName, arguments.get(i));
+            }
+        }
 
+        this.scopeStack.push(currentScope);
+        currentScope = functionScope;
+        ReturnValue value= (ReturnValue)this.visitFunctionBody(function.functionBody());
+        currentScope = scopeStack.pop();
+
+        return value.getValue() ;
+    }
+
+    @Override
+    public Object visitFunctionBody(SavepointParser.FunctionBodyContext ctx) {
+        Object value=super.visitFunctionBody(ctx);
+        if(value instanceof ReturnValue){
+            return value;
+        }
+        return new ReturnValue(null);
+    }
 }
