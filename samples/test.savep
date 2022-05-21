@@ -1,7 +1,14 @@
-int[25] masyvas;
+int calc(int a, int b)
+{
+    if(a>10){
+        WriteLine(1);
+        return a*b+10;
+        WriteLine(2);
+    }
+    WriteLine(3);
+}
 
-masyvas[0] = 33;
-masyvas[24] = 12;
 
-WriteLine(masyvas[0]);
-WriteLine(masyvas[24]);
+int pirmas = 20;
+int antras = 3;
+calc(pirmas, antras);

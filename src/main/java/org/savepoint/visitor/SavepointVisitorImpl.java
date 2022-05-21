@@ -82,12 +82,12 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) {
+    public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) { //TODO: implement write to file call
         return super.visitWriteFunctionCall(ctx);
     }
 
     @Override
-    public Object visitAppendFunctionCall(SavepointParser.AppendFunctionCallContext ctx) {
+    public Object visitAppendFunctionCall(SavepointParser.AppendFunctionCallContext ctx) { //TODO: implement append to file call
         return super.visitAppendFunctionCall(ctx);
     }
 
