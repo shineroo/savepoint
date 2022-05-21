@@ -2,13 +2,28 @@ int a = 1;
 a = 15;
 double b = 24.54;
 b = b/a;
-if(2.5>=2)
+int c = 0;
+while(c<a)
 {
-    WriteLine(b);
+    int temp = 15;
+    WriteLine(c);
+    if(c == 9){
+    return;
+    }
+    c=c+1;
 }
-else
+WriteLine("-------forloop---------------");
+int i = 4;
+for(i; i<10; i=i+1)
 {
-    WriteLine("else'as");
+    WriteLine(i);
 }
+WriteLine("-----------------------------");
+WriteLine(i);
+
 WriteLine("kazkas");
+WriteLine(c);
+WriteLine(c);
+WriteLine(c);
+WriteLine(c);
 

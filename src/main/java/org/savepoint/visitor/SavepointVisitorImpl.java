@@ -2,6 +2,8 @@ package org.savepoint.visitor;
 
 
 import org.antlr.v4.runtime.tree.RuleNode;
+import org.savepoint.visitor.exceptions.SavepointException;
+import org.savepoint.visitor.exceptions.SavepointVariableIncorrectFormat;
 
 import java.util.Stack;
 
@@ -195,7 +197,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLoop(SavepointParser.LoopContext ctx) { //TODO: return is weird atm, not sure if there is a normal exit condition
+    public Object visitLoopW(SavepointParser.LoopWContext ctx) {
         boolean condition = (boolean)visit(ctx.expression());
         Object val = new Object();
         while(condition)
@@ -205,6 +207,21 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         }
         return null;
     }
+
+    @Override
+    public Object visitLoopF(SavepointParser.LoopFContext ctx) {
+        try{visitStatement(ctx.statement());}
+        catch(NullPointerException ex){}
+        boolean condition = (boolean)visit(ctx.expression());
+        while(condition)
+        {
+            visit(ctx.block());
+            visitAssignment(ctx.assignment());
+            condition = (boolean) visit(ctx.expression());
+        }
+        return null;
+    }
+
 
     @Override
     protected boolean shouldVisitNextChild(RuleNode node, Object currentResult) {
