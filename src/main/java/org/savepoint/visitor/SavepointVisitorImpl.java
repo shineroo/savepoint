@@ -12,8 +12,12 @@ import java.util.Stack;
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     private final StringBuilder SYSTEM_OUT = new StringBuilder();
+
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
+    private final Stack<ArrayScope> arrayScopeStack = new Stack<>();
+    private ArrayScope currentArrayScope = new ArrayScope();
+
     private final Map<String, SavepointParser.FunctionDeclarationContext> functions=new HashMap<>();
 
     @Override
@@ -29,6 +33,29 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         System.out.println(text);
         SYSTEM_OUT.append(text).append("\n");
         return null;
+    }
+
+    @Override
+    public Object visitArrayDeclaration(SavepointParser.ArrayDeclarationContext ctx) {
+        int length = Integer.parseInt(ctx.INTEGER().getText());
+        String type = ctx.TYPE().getText();
+        String name = ctx.IDENTIFIER().getText();
+        currentArrayScope.declareArray(name, length, type);
+        return null;
+    }
+
+    @Override
+    public Object visitArrayElementDeclaration(SavepointParser.ArrayElementDeclarationContext ctx) {
+        int index = Integer.parseInt(ctx.INTEGER().getText());
+        String name = ctx.IDENTIFIER().getText();
+        Object value = visit(ctx.expression());
+        currentArrayScope.changeElement(name, index, value);
+        return null;
+    }
+
+    @Override
+    public Object visitArrayIdentifierExpression(SavepointParser.ArrayIdentifierExpressionContext ctx) {
+        return this.currentArrayScope.resolveArrayItem(ctx.IDENTIFIER().getText(), Integer.parseInt(ctx.INTEGER().getText()));
     }
 
     @Override

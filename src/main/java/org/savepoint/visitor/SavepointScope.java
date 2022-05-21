@@ -12,6 +12,7 @@ public class SavepointScope {
     private final Map<String, Pair<Object, String>> symbols = new HashMap<>();
     private final SavepointScope parent;
 
+
     public SavepointScope(SavepointScope parent) {
         this.parent = parent;
     }
@@ -64,7 +65,7 @@ public class SavepointScope {
         }
     }
 
-    public boolean evalType(String type, Object value)
+    public static boolean evalType(String type, Object value)
     {
         if(value==null)
             return false;

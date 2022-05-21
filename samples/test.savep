@@ -1,45 +1,7 @@
-int sum(int a, int b){
-    return(a+b);
-}
+int[25] masyvas;
 
-WriteLine(sum(1, 2));
-int a = 1;
-a = 15;
-double b = 24.54;
-b = b/a;
-int c = 0;
-while(c<a)
-{
-    int temp = 15;
-    WriteLine(c);
-    if(c == 9){
-    return;
-    }
-    c=c+1;
-}
-WriteLine("-------forloop---------------");
-int j = 0;
-for(int i = 4; i<10; i=i+1)
-{
-    WriteLine(i);
-    if(i==9){
-    j = i+50;
-    }
-}
-WriteLine("-----------------------------");
-WriteLine(j);
+masyvas[0] = 33;
+masyvas[24] = 12;
 
-WriteLine("kazkas"+" "+(51.5+4)+false);
-WriteLine(c);
-WriteLine(c);
-WriteLine(c);
-WriteLine(c);
-
-string thing = "C:\Users\Karolis\Desktop\read.txt";
-string sth = FileReadAllLines(thing);
-WriteLine("---testing read----");
-WriteLine(sth);
-WriteLine("-------------------");
-string test = 6;
-WriteLine(test);
-WriteLine(test);
+WriteLine(masyvas[0]);
+WriteLine(masyvas[24]);

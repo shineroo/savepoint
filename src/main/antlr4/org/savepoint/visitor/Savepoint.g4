@@ -20,6 +20,8 @@ statement
  | returnStatement';'
  | increment';'
  | decrement';'
+ | arrayDeclaration';'
+ | arrayElementDeclaration';'
  ;
 
 functionDeclaration
@@ -35,6 +37,11 @@ returnStatement: 'return' expression? ;
 variableDeclaration
 : TYPE IDENTIFIER '=' expression;
 
+arrayDeclaration
+: TYPE'['INTEGER']' IDENTIFIER;
+
+arrayElementDeclaration
+: IDENTIFIER'['INTEGER']' '=' expression;
 
 assignment
  : IDENTIFIER '=' expression
@@ -77,6 +84,7 @@ expressionList
 expression
  : constant                                             #constantExpression
  | IDENTIFIER                                           #identifierExpression
+ | IDENTIFIER'['INTEGER']'                              #arrayIdentifierExpression
  | '(' expression ')'                                   #parenthesesExpression
  | booleanUnaryOp expression                            #booleanUnaryOpExpression
  | expression booleanBinaryOp expression                #booleanBinaryOpExpression
