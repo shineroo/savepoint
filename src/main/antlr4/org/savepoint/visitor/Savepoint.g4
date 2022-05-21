@@ -43,8 +43,13 @@ functionCall
 
 systemFunctionCall
  : PRINT '(' expression ')'                             #printFunctionCall
+ | WRITE '(' expression',' STRING ')'                   #writeFunctionCall
+ | APPEND '(' expression',' STRING ')'                  #appendFunctionCall
  ;
 
+systemFunctionCall1
+: READ '(' IDENTIFIER ')'                              #readFunctionCall
+;
 
 ifElseStatement: 'if' '(' expression ')' block ('else' block)?;
 
@@ -76,6 +81,7 @@ expression
  | expression stringBinaryOp expression                 #stringBinaryOpExpression
  | expression booleanCompareOp expression               #comparisonExpression
  | functionCall                                         #functionCallExpression
+ | systemFunctionCall1                                  #systemFunctionCallExpression
  ;
 
 booleanUnaryOp : '!' ;
@@ -92,6 +98,9 @@ stringBinaryOp : '..' ; //concat
 
 
 PRINT : 'WriteLine';
+READ : 'FileReadAllLines';
+WRITE : 'FileWriteAllLines';
+APPEND : 'FileAppendAllLines';
 
 LOOP : 'while';
 FORLOOP : 'for';

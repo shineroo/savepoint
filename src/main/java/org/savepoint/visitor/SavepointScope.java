@@ -64,7 +64,7 @@ public class SavepointScope {
         }
     }
 
-    public boolean evalType(String type, Object value) //TODO: change this to switch or even into a better idea entirely
+    public boolean evalType(String type, Object value)
     {
         if(value==null)
             return false;
@@ -88,7 +88,8 @@ public class SavepointScope {
                 return thing.equals("true") || thing.equals("false");
             case "string":
                 var thing2 = thing.toCharArray();
-                return thing2[0] == '\"' && thing2[thing2.length - 1] == '\"';
+                return  true;
+                //return thing2[0] == '\"' && thing2[thing2.length - 1] == '\"';
             default:
                 return false;
         }

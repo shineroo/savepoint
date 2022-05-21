@@ -3,11 +3,12 @@ package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.tree.RuleNode;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 import java.util.Stack;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
-
-    //private final Map<String, Object> symbols = new HashMap<>();
 
     private final StringBuilder SYSTEM_OUT = new StringBuilder();
     private final Stack<SavepointScope> scopeStack = new Stack<>();
@@ -26,6 +27,39 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         System.out.println(text);
         SYSTEM_OUT.append(text).append("\n");
         return null;
+    }
+
+    @Override
+    public Object visitReadFunctionCall(SavepointParser.ReadFunctionCallContext ctx) {
+        try{
+            String location = currentScope.resolveVariable(ctx.IDENTIFIER().getText()).toString().replaceAll("\"", "");
+            File file = new File(location);
+            Scanner reader = new Scanner(file);
+            StringBuilder allFile = new StringBuilder();
+            while(reader.hasNextLine()){
+                String data = reader.nextLine();
+                allFile.append(data);
+                if(reader.hasNextLine())
+                    allFile.append("\n");
+            }
+            reader.close();
+            return allFile.toString();
+        }
+        catch(FileNotFoundException ex){
+            System.out.println(ex.getMessage());
+            SYSTEM_OUT.append(ex.getMessage()).append("\n");
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) {
+        return super.visitWriteFunctionCall(ctx);
+    }
+
+    @Override
+    public Object visitAppendFunctionCall(SavepointParser.AppendFunctionCallContext ctx) {
+        return super.visitAppendFunctionCall(ctx);
     }
 
     @Override
@@ -75,7 +109,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object val2 = visit(ctx.expression(1));
         String thing1 = val1.toString();
         String thing2 = val2.toString();
-        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2)) //TODO: make it so you can add/multiply ints with doubles
+        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
             return switch (ctx.numericAddOp().getText())
                     {
                         case "+" -> (Integer)val1+(Integer) val2;
