@@ -19,6 +19,7 @@ statement
  | loopW
  | returnStatement';'
  | increment';'
+ | decrement';'
  ;
 
 functionDeclaration
@@ -53,11 +54,12 @@ block: '{' statement* '}';
 
 
 increment: IDENTIFIER '++';
+decrement: IDENTIFIER '--';
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
 loopF
-: FORLOOP '(' (statement | IDENTIFIER';') expression';'assignment ')' block;
+: FORLOOP '(' (statement | IDENTIFIER';') expression';'(assignment | increment | decrement) ')' block;
 
 loopW
 : LOOP '(' expression ')' block;

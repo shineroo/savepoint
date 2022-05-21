@@ -195,6 +195,18 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         return null;
     }
 
+    public Object visitDecrement(SavepointParser.DecrementContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        Object value = currentScope.resolveVariable(identifier);
+        if(currentScope.evalType("int", value)){
+            this.currentScope.changeVariable(identifier, (Integer)value - 1);
+        } else if (currentScope.evalType("double", value)) {
+            this.currentScope.changeVariable(identifier, (Double)value - 1);
+        };
+        //this.currentScope.declareVariable(currentScope.getType(value), identifier, value);
+        return null;
+    }
+
     @Override
     public Object visitIfElseStatement(SavepointParser.IfElseStatementContext ctx) {
         boolean value = (boolean)visit(ctx.expression());
@@ -239,7 +251,12 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         while(condition)
         {
             visit(ctx.block());
-            visitAssignment(ctx.assignment());
+            try{visitAssignment(ctx.assignment());}
+            catch(NullPointerException ignored){}
+            try{visitIncrement(ctx.increment());}
+            catch(NullPointerException ignored){}
+            try{visitDecrement(ctx.decrement());}
+            catch(NullPointerException ignored){}
             condition = (boolean) visit(ctx.expression());
         }
         currentScope = scopeStack.pop();
