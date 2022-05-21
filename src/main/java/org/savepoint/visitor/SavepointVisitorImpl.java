@@ -173,6 +173,19 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitIncrement(SavepointParser.IncrementContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        Object value = currentScope.resolveVariable(identifier);
+        if(currentScope.evalType("int", value)){
+            this.currentScope.changeVariable(identifier, (Integer)value + 1);
+        } else if (currentScope.evalType("double", value)) {
+            this.currentScope.changeVariable(identifier, (Double)value + 1);
+        };
+        //this.currentScope.declareVariable(currentScope.getType(value), identifier, value);
+        return null;
+    }
+
+    @Override
     public Object visitIfElseStatement(SavepointParser.IfElseStatementContext ctx) {
         boolean value = (boolean)visit(ctx.expression());
         if (value) {

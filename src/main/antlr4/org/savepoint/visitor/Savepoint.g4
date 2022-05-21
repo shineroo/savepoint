@@ -17,6 +17,7 @@ statement
  | ifElseStatement
  | loop
  | returnStatement';'
+ | increment';'
  ;
 
 functionDeclaration
@@ -50,6 +51,7 @@ ifElseStatement: 'if' '(' expression ')' block ('else' block)?;
 block: '{' statement* '}';
 
 
+increment: IDENTIFIER '++';
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
