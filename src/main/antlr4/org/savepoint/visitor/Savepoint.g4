@@ -18,6 +18,8 @@ statement
  | loopF
  | loopW
  | returnStatement';'
+ | increment';'
+ | decrement';'
  ;
 
 functionDeclaration
@@ -56,11 +58,13 @@ ifElseStatement: 'if' '(' expression ')' block ('else' block)?;
 block: '{' statement* '}';
 
 
+increment: IDENTIFIER '++';
+decrement: IDENTIFIER '--';
 
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
 loopF
-: FORLOOP '(' (statement | IDENTIFIER';') expression';'assignment ')' block;
+: FORLOOP '(' (statement | IDENTIFIER';') expression';'(assignment | increment | decrement) ')' block;
 
 loopW
 : LOOP '(' expression ')' block;

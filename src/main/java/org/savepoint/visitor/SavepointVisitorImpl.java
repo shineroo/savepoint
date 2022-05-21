@@ -3,6 +3,7 @@ package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.tree.RuleNode;
 
+import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -13,6 +14,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     private final StringBuilder SYSTEM_OUT = new StringBuilder();
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
+    private final Map<String, SavepointParser.FunctionDeclarationContext> functions=new HashMap<>();
 
     @Override
     public Object visitProgram(SavepointParser.ProgramContext ctx) {
@@ -216,6 +218,31 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitIncrement(SavepointParser.IncrementContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        Object value = currentScope.resolveVariable(identifier);
+        if(currentScope.evalType("int", value)){
+            this.currentScope.changeVariable(identifier, (Integer)value + 1);
+        } else if (currentScope.evalType("double", value)) {
+            this.currentScope.changeVariable(identifier, (Double)value + 1);
+        };
+        //this.currentScope.declareVariable(currentScope.getType(value), identifier, value);
+        return null;
+    }
+
+    public Object visitDecrement(SavepointParser.DecrementContext ctx) {
+        String identifier = ctx.IDENTIFIER().getText();
+        Object value = currentScope.resolveVariable(identifier);
+        if(currentScope.evalType("int", value)){
+            this.currentScope.changeVariable(identifier, (Integer)value - 1);
+        } else if (currentScope.evalType("double", value)) {
+            this.currentScope.changeVariable(identifier, (Double)value - 1);
+        };
+        //this.currentScope.declareVariable(currentScope.getType(value), identifier, value);
+        return null;
+    }
+
+    @Override
     public Object visitIfElseStatement(SavepointParser.IfElseStatementContext ctx) {
         boolean value = (boolean)visit(ctx.expression());
         if (value) {
@@ -259,7 +286,12 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         while(condition)
         {
             visit(ctx.block());
-            visitAssignment(ctx.assignment());
+            try{visitAssignment(ctx.assignment());}
+            catch(NullPointerException ignored){}
+            try{visitIncrement(ctx.increment());}
+            catch(NullPointerException ignored){}
+            try{visitDecrement(ctx.decrement());}
+            catch(NullPointerException ignored){}
             condition = (boolean) visit(ctx.expression());
         }
         currentScope = scopeStack.pop();
@@ -280,6 +312,46 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             return new ReturnValue(this.visit(ctx.expression()));
     }
 
+    @Override
+    public Object visitFunctionDeclaration(SavepointParser.FunctionDeclarationContext ctx) {
+        String functionName=ctx.IDENTIFIER().getText();
+        this.functions.put(functionName, ctx);
+        return null;
+    }
 
+    @Override
+    public Object visitFunctionCall(SavepointParser.FunctionCallContext ctx) {
+        String functionName=ctx.IDENTIFIER().getText();
+        SavepointParser.FunctionDeclarationContext function = this.functions.get(functionName);
+        List<Object> arguments=new ArrayList<>();
+        if(ctx.expressionList()!=null){
+            for(var expr : ctx.expressionList().expression()){
+                arguments.add(this.visit(expr));
+            }
+        }
+        SavepointScope functionScope=new SavepointScope();
+        if(function.paramList()!=null){
+            for(int i=0; i<function.paramList().IDENTIFIER().size(); i++){
+                String paramName=function.paramList().IDENTIFIER(i).getText();
+                String type=function.paramList().TYPE(i).getText();
+                functionScope.declareVariable(type, paramName, arguments.get(i));
+            }
+        }
 
+        this.scopeStack.push(currentScope);
+        currentScope = functionScope;
+        ReturnValue value= (ReturnValue)this.visitFunctionBody(function.functionBody());
+        currentScope = scopeStack.pop();
+
+        return value.getValue() ;
+    }
+
+    @Override
+    public Object visitFunctionBody(SavepointParser.FunctionBodyContext ctx) {
+        Object value=super.visitFunctionBody(ctx);
+        if(value instanceof ReturnValue){
+            return value;
+        }
+        return new ReturnValue(null);
+    }
 }
