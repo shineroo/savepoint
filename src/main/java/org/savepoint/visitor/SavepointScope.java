@@ -67,7 +67,7 @@ public class SavepointScope {
 
     public static boolean evalType(String type, Object value)
     {
-        if(value==null)
+        if(value == null)
             return false;
         String thing = value.toString();
         switch (type) {
@@ -95,6 +95,33 @@ public class SavepointScope {
                 return false;
         }
     }
+    public static String getType(Object value) {
+        if (value.getClass() == Integer.class){
+            return "int";
+        }
+        if (value.getClass() == String.class){
+            return "string";
+        }
+        if (value.getClass() == Double.class){
+            return "double";
+        }
+        if (value.getClass() == Boolean.class){
+            return "boolean";
+        }
+        return null;
+    }
 
+    public static String autism(Object value1, Object value2) {
+        String val1type = getType(value1);
+        String val2type = getType(value2);
+
+        if (val1type.equals(val2type)){
+            return val1type;
+        }
+        if ((val1type.equals("int") && val2type.equals("double"))
+                || (val1type.equals("double") && val2type.equals("int")))
+            return "double";
+        return "";
+    }
 
 }
