@@ -9,15 +9,23 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     //private final Map<String, Object> symbols = new HashMap<>();
 
+    private final StringBuilder SYSTEM_OUT = new StringBuilder();
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
     private final Map<String, SavepointParser.FunctionDeclarationContext> functions=new HashMap<>();
+
+    @Override
+    public Object visitProgram(SavepointParser.ProgramContext ctx) {
+        super.visitProgram(ctx);
+        return SYSTEM_OUT.toString();
+    }
 
     @Override
     public Object visitPrintFunctionCall(SavepointParser.PrintFunctionCallContext ctx) {
         String text = visit(ctx.expression()).toString();
         text = text.replaceAll("\"", "");
         System.out.println(text);
+        SYSTEM_OUT.append(text).append("\n");
         return null;
     }
 
@@ -85,12 +93,13 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "-" -> first-second;
                         default -> null;
                     };}
-        else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+        else //if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+        {
             if (ctx.numericAddOp().getText().equals("+"))
-                return val1 + (String) val2;
+                return val1 + val2.toString();
             return null;
         }
-        else return null;
+        //else return null;
     }
 
     @Override
@@ -196,16 +205,34 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLoop(SavepointParser.LoopContext ctx) { //TODO: return is weird atm, not sure if there is a normal exit condition
+    public Object visitLoopW(SavepointParser.LoopWContext ctx) {
         boolean condition = (boolean)visit(ctx.expression());
-        Object val = new Object();
+        //Object val = new Object();
         while(condition)
         {
-            val = visit(ctx.block());
+            visit(ctx.block());
             condition = (boolean) visit(ctx.expression());
         }
         return null;
     }
+
+    @Override
+    public Object visitLoopF(SavepointParser.LoopFContext ctx) {
+        scopeStack.push(currentScope);
+        currentScope = new SavepointScope(currentScope);
+        try{visitStatement(ctx.statement());}
+        catch(NullPointerException ignored){}
+        boolean condition = (boolean)visit(ctx.expression());
+        while(condition)
+        {
+            visit(ctx.block());
+            visitAssignment(ctx.assignment());
+            condition = (boolean) visit(ctx.expression());
+        }
+        currentScope = scopeStack.pop();
+        return null;
+    }
+
 
     @Override
     protected boolean shouldVisitNextChild(RuleNode node, Object currentResult) {

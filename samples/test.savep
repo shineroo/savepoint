@@ -7,13 +7,31 @@ int a = 1;
 a = 15;
 double b = 24.54;
 b = b/a;
-if(2.5>=2)
+int c = 0;
+while(c<a)
 {
-    WriteLine(b);
+    int temp = 15;
+    WriteLine(c);
+    if(c == 9){
+    return;
+    }
+    c=c+1;
 }
-else
+WriteLine("-------forloop---------------");
+int j = 0;
+for(int i = 4; i<10; i=i+1)
 {
-    WriteLine("else'as");
+    WriteLine(i);
+    if(i==9){
+    j = i+50;
+    }
 }
-WriteLine("kazkas");
+WriteLine("-----------------------------");
+WriteLine(j);
+
+WriteLine("kazkas"+" "+(51.5+4)+false);
+WriteLine(c);
+WriteLine(c);
+WriteLine(c);
+WriteLine(c);
 
