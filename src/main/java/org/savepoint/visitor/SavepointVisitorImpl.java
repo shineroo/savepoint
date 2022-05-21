@@ -278,23 +278,25 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         currentArrayScope = new ArrayScope(currentArrayScope);
         currentScope = new SavepointScope(currentScope);
 
-        super.visitBlock(ctx);
+        Object item = super.visitBlock(ctx);
 
         currentScope = scopeStack.pop();
         currentArrayScope = arrayScopeStack.pop();
-        return null;
+        return item;
     }
 
     @Override
     public Object visitLoopW(SavepointParser.LoopWContext ctx) {
         boolean condition = (boolean)visit(ctx.expression());
-        //Object val = new Object();
+        Object val = new Object();
         while(condition)
         {
-            visit(ctx.block());
+            val = visit(ctx.block());
+            if(val != null)
+                break;
             condition = (boolean) visit(ctx.expression());
         }
-        return null;
+        return val;
     }
 
     @Override
@@ -308,9 +310,12 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         try{visitStatement(ctx.statement());}
         catch(NullPointerException ignored){}
         boolean condition = (boolean)visit(ctx.expression());
+        Object value = new Object();
         while(condition)
         {
-            visit(ctx.block());
+            value = visit(ctx.block());
+            if(value!=null)
+                break;
             try{visitAssignment(ctx.assignment());}
             catch(NullPointerException ignored){}
             try{visitIncrement(ctx.increment());}
@@ -318,10 +323,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             try{visitDecrement(ctx.decrement());}
             catch(NullPointerException ignored){}
             condition = (boolean) visit(ctx.expression());
+
         }
         currentScope = scopeStack.pop();
         currentArrayScope = arrayScopeStack.pop();
-        return null;
+        return value;
     }
 
 

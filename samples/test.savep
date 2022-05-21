@@ -1,15 +1,23 @@
 int calc(int a, int b)
 {
-    if(a>10){
-        WriteLine(1);
-        return a*b+10;
-        WriteLine(2);
+    /*for(int abc = 0; abc< 7; abc++){
+        WriteLine(abc);
+        if(abc==3){
+            return 1;
+        }
+    }*/
+    int abc = 0;
+    while(abc<7)
+    {
+        WriteLine(abc);
+        if(abc==3){
+            return abc;
+        }
+        abc++;
     }
-    WriteLine(3);
 }
 
 
-int pirmas = 20;
+int pirmas = 9;
 int antras = 3;
-calc(pirmas, antras);
 calc(pirmas, antras);
