@@ -13,15 +13,18 @@ while(c<a)
     c=c+1;
 }
 WriteLine("-------forloop---------------");
-
+int j = 0;
 for(int i = 4; i<10; i=i+1)
 {
     WriteLine(i);
+    if(i==9){
+    j = i+50;
+    }
 }
 WriteLine("-----------------------------");
-WriteLine(i);
+WriteLine(j);
 
-WriteLine("kazkas");
+WriteLine("kazkas"+" "+(51.5+4)+false);
 WriteLine(c);
 WriteLine(c);
 WriteLine(c);

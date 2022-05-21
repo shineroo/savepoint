@@ -2,8 +2,6 @@ package org.savepoint.visitor;
 
 
 import org.antlr.v4.runtime.tree.RuleNode;
-import org.savepoint.visitor.exceptions.SavepointException;
-import org.savepoint.visitor.exceptions.SavepointVariableIncorrectFormat;
 
 import java.util.Stack;
 
@@ -94,12 +92,13 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "-" -> first-second;
                         default -> null;
                     };}
-        else if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+        else //if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
+        {
             if (ctx.numericAddOp().getText().equals("+"))
-                return val1 + (String) val2;
+                return val1 + val2.toString();
             return null;
         }
-        else return null;
+        //else return null;
     }
 
     @Override
@@ -207,10 +206,10 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitLoopW(SavepointParser.LoopWContext ctx) {
         boolean condition = (boolean)visit(ctx.expression());
-        Object val = new Object();
+        //Object val = new Object();
         while(condition)
         {
-            val = visit(ctx.block());
+            visit(ctx.block());
             condition = (boolean) visit(ctx.expression());
         }
         return null;
@@ -221,7 +220,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         scopeStack.push(currentScope);
         currentScope = new SavepointScope(currentScope);
         try{visitStatement(ctx.statement());}
-        catch(NullPointerException ex){}
+        catch(NullPointerException ignored){}
         boolean condition = (boolean)visit(ctx.expression());
         while(condition)
         {
