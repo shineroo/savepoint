@@ -138,14 +138,14 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object val2 = visit(ctx.expression(1));
         String thing1 = val1.toString();
         String thing2 = val2.toString();
-        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
+        if(SavepointScope.evalType("int", thing1) && SavepointScope.evalType("int", thing2))
             return switch (ctx.numericAddOp().getText())
                     {
                         case "+" -> (Integer)val1+(Integer) val2;
                         case "-" -> (Integer)val1-(Integer) val2;
                         default -> null;
                     };
-        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2)){
+        else if(SavepointScope.evalType("double", thing1) && SavepointScope.evalType("double", thing2)){
             double first = Double.parseDouble(thing1);
             double second = Double.parseDouble(thing2);
 
@@ -170,7 +170,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object val2 = visit(ctx.expression(1));
         String thing1 = val1.toString();
         String thing2 = val2.toString();
-        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
+        if(SavepointScope.evalType("int", thing1) && SavepointScope.evalType("int", thing2))
             return switch (ctx.numericMultiOp().getText())
                     {
                         case "*" -> (Integer)val1*(Integer) val2;
@@ -178,7 +178,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "%" -> (Integer)val1%(Integer) val2;
                         default -> null;
                     };
-        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2)){
+        else if(SavepointScope.evalType("double", thing1) && SavepointScope.evalType("double", thing2)){
             double first = Double.parseDouble(thing1);
             double second = Double.parseDouble(thing2);
 
@@ -200,7 +200,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         String thing2 = val2.toString();
 
         // booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
-        if(currentScope.evalType("int", thing1) && currentScope.evalType("int", thing2))
+        if(SavepointScope.evalType("int", thing1) && SavepointScope.evalType("int", thing2))
             return switch (ctx.booleanCompareOp().getText())
                     {
                         case "==" -> val1.equals(val2);
@@ -211,7 +211,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "<=" -> ((Integer)val1) <= ((Integer)val2);
                         default -> null;
                     };
-        else if(currentScope.evalType("double", thing1) && currentScope.evalType("double", thing2)){
+        else if(SavepointScope.evalType("double", thing1) && SavepointScope.evalType("double", thing2)){
             double first = Double.parseDouble(thing1);
             double second = Double.parseDouble(thing2);
 
@@ -248,11 +248,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     public Object visitIncrement(SavepointParser.IncrementContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
         Object value = currentScope.resolveVariable(identifier);
-        if(currentScope.evalType("int", value)){
+        if(SavepointScope.evalType("int", value)){
             this.currentScope.changeVariable(identifier, (Integer)value + 1);
-        } else if (currentScope.evalType("double", value)) {
+        } else if (SavepointScope.evalType("double", value)) {
             this.currentScope.changeVariable(identifier, (Double)value + 1);
-        };
+        }
         //this.currentScope.declareVariable(currentScope.getType(value), identifier, value);
         return null;
     }
@@ -260,11 +260,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     public Object visitDecrement(SavepointParser.DecrementContext ctx) {
         String identifier = ctx.IDENTIFIER().getText();
         Object value = currentScope.resolveVariable(identifier);
-        if(currentScope.evalType("int", value)){
+        if(SavepointScope.evalType("int", value)){
             this.currentScope.changeVariable(identifier, (Integer)value - 1);
-        } else if (currentScope.evalType("double", value)) {
+        } else if (SavepointScope.evalType("double", value)) {
             this.currentScope.changeVariable(identifier, (Double)value - 1);
-        };
+        }
         //this.currentScope.declareVariable(currentScope.getType(value), identifier, value);
         return null;
     }
@@ -285,9 +285,15 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitBlock(SavepointParser.BlockContext ctx) {
         this.scopeStack.push(currentScope);
+        this.arrayScopeStack.push(currentArrayScope);
+
+        currentArrayScope = new ArrayScope(currentArrayScope);
         currentScope = new SavepointScope(currentScope);
+
         super.visitBlock(ctx);
+
         currentScope = scopeStack.pop();
+        currentArrayScope = arrayScopeStack.pop();
         return null;
     }
 
@@ -306,7 +312,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitLoopF(SavepointParser.LoopFContext ctx) {
         scopeStack.push(currentScope);
+        arrayScopeStack.push(currentArrayScope);
+
         currentScope = new SavepointScope(currentScope);
+        currentArrayScope = new ArrayScope(currentArrayScope);
+
         try{visitStatement(ctx.statement());}
         catch(NullPointerException ignored){}
         boolean condition = (boolean)visit(ctx.expression());
@@ -322,6 +332,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             condition = (boolean) visit(ctx.expression());
         }
         currentScope = scopeStack.pop();
+        currentArrayScope = arrayScopeStack.pop();
         return null;
     }
 
@@ -364,11 +375,14 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                 functionScope.declareVariable(type, paramName, arguments.get(i));
             }
         }
-
+        this.arrayScopeStack.push(currentArrayScope);
         this.scopeStack.push(currentScope);
+
+        currentArrayScope = new ArrayScope();
         currentScope = functionScope;
         ReturnValue value= (ReturnValue)this.visitFunctionBody(function.functionBody());
         currentScope = scopeStack.pop();
+        currentArrayScope = arrayScopeStack.pop();
 
         return value.getValue() ;
     }
