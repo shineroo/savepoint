@@ -136,73 +136,70 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     public Object visitNumericAddOpExpression(SavepointParser.NumericAddOpExpressionContext ctx) {
         Object val1 = visit(ctx.expression(0));
         Object val2 = visit(ctx.expression(1));
-        String thing1 = val1.toString();
-        String thing2 = val2.toString();
-        if(SavepointScope.evalType("int", thing1) && SavepointScope.evalType("int", thing2))
-            return switch (ctx.numericAddOp().getText())
-                    {
-                        case "+" -> (Integer)val1+(Integer) val2;
-                        case "-" -> (Integer)val1-(Integer) val2;
-                        default -> null;
-                    };
-        else if(SavepointScope.evalType("double", thing1) && SavepointScope.evalType("double", thing2)){
-            double first = Double.parseDouble(thing1);
-            double second = Double.parseDouble(thing2);
 
-            return switch (ctx.numericAddOp().getText())
-                    {
-                        case "+" -> first+second;
-                        case "-" -> first-second;
-                        default -> null;
-                    };}
-        else //if(currentScope.evalType("string", thing1) && currentScope.evalType("string", thing2)) {
-        {
-            if (ctx.numericAddOp().getText().equals("+"))
-                return val1 + val2.toString();
-            return null;
+        switch(SavepointScope.autism(val1, val2)){
+            case "int" -> {
+                return switch (ctx.numericAddOp().getText()) {
+                    case "+" -> (Integer) val1 + (Integer) val2;
+                    case "-" -> (Integer) val1 - (Integer) val2;
+                    default -> null;
+                };
+            }
+            case "double" -> {
+                double first = Double.parseDouble(val1.toString());
+                double second = Double.parseDouble(val2.toString());
+                return switch (ctx.numericAddOp().getText()) {
+                    case "+" -> first+second;
+                    case "-" -> first-second;
+                    default -> null;
+                };
+            }
+            case "string" -> {
+                if (ctx.numericAddOp().getText().equals("+"))
+                    return val1 + val2.toString();
+                return null;
+            }
         }
-        //else return null;
+        return null;
     }
 
     @Override
     public Object visitNumericMultiOpExpression(SavepointParser.NumericMultiOpExpressionContext ctx) {
         Object val1 = visit(ctx.expression(0));
         Object val2 = visit(ctx.expression(1));
-        String thing1 = val1.toString();
-        String thing2 = val2.toString();
-        if(SavepointScope.evalType("int", thing1) && SavepointScope.evalType("int", thing2))
-            return switch (ctx.numericMultiOp().getText())
-                    {
-                        case "*" -> (Integer)val1*(Integer) val2;
-                        case "/" -> (Integer)val1/(Integer) val2;
-                        case "%" -> (Integer)val1%(Integer) val2;
-                        default -> null;
-                    };
-        else if(SavepointScope.evalType("double", thing1) && SavepointScope.evalType("double", thing2)){
-            double first = Double.parseDouble(thing1);
-            double second = Double.parseDouble(thing2);
 
-            return switch (ctx.numericMultiOp().getText())
-                    {
-                        case "*" -> first*second;
-                        case "/" -> first/second;
-                        case "%" -> first%second;
-                        default -> null;
-                    };}
-        else return null;
+        switch(SavepointScope.autism(val1, val2)) {
+            case "int" -> {
+                return switch (ctx.numericMultiOp().getText()) {
+                    case "*" -> (Integer)val1*(Integer) val2;
+                    case "/" -> (Integer)val1/(Integer) val2;
+                    case "%" -> (Integer)val1%(Integer) val2;
+                    default -> null;
+                };
+            }
+            case "double" -> {
+                double first = Double.parseDouble(val1.toString());
+                double second = Double.parseDouble(val2.toString());
+                return switch (ctx.numericMultiOp().getText()) {
+                    case "*" -> first*second;
+                    case "/" -> first/second;
+                    case "%" -> first%second;
+                    default -> null;
+                };
+            }
+        }
+        return null;
     }
 
     @Override
     public Object visitComparisonExpression(SavepointParser.ComparisonExpressionContext ctx) {
         Object val1 = visit(ctx.expression(0));
         Object val2 = visit(ctx.expression(1));
-        String thing1 = val1.toString();
-        String thing2 = val2.toString();
 
-        // booleanCompareOp: '>' | '<' | '<=' | '>=' | '==' | '!=';
-        if(SavepointScope.evalType("int", thing1) && SavepointScope.evalType("int", thing2))
-            return switch (ctx.booleanCompareOp().getText())
-                    {
+        if (SavepointScope.getType(val1).equals(SavepointScope.getType(val2))){  // maybe like this
+            switch(SavepointScope.getType(val1)) {
+                case "int" -> {
+                    return switch (ctx.booleanCompareOp().getText()) {
                         case "==" -> val1.equals(val2);
                         case "!=" -> !val1.equals(val2);
                         case ">" -> ((Integer)val1) > ((Integer)val2);
@@ -211,32 +208,23 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                         case "<=" -> ((Integer)val1) <= ((Integer)val2);
                         default -> null;
                     };
-        else if(SavepointScope.evalType("double", thing1) && SavepointScope.evalType("double", thing2)){
-            double first = Double.parseDouble(thing1);
-            double second = Double.parseDouble(thing2);
-
-            return switch (ctx.booleanCompareOp().getText())
-                    {
-                        case "==" -> (first)==(second);
+                }
+                case "double" -> {
+                    double first = Double.parseDouble(val1.toString());
+                    double second = Double.parseDouble(val2.toString());
+                    return switch (ctx.booleanCompareOp().getText()) {
+                        case "==" -> (first) == (second);
                         case "!=" -> (first)!=(second);
                         case ">" -> (first) > (second);
                         case ">=" -> (first) >= (second);
                         case "<" -> (first) < (second);
                         case "<=" -> (first) <= (second);
                         default -> null;
-                    };}
-        else return null;
-
-        /*if (getType(thing1) == getType(thing2)){  // maybe like this
-            switch(getType(thing1)) {
-                case "int" -> {
-                    return switch (ctx.booleanCompareOp().getText()) {
-                        case "==" -> ((Integer) val1).equals((Integer) val2);
-                        default -> null;
                     };
                 }
             }
-        }*/
+        }
+        return false;
     }
 
     @Override

@@ -1,7 +1,3 @@
-int[25] masyvas;
-
-masyvas[0] = 33;
-masyvas[24] = 12;
-
-WriteLine(masyvas[0]);
-WriteLine(masyvas[24]);
+int bitch = 5;
+int fuck = 5;
+WriteLine(bitch * fuck);
