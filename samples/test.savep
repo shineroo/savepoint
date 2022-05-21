@@ -17,7 +17,14 @@ int calc(int a, int b)
     }
 }
 
+int test(int n){
+    if(n>=8){
+        return n;
+    }
+    return test(n+1)+test(n+2);
+}
 
 int pirmas = 9;
 int antras = 3;
 calc(pirmas, antras);
+WriteLine(test(6));

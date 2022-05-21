@@ -69,7 +69,7 @@ public class SavepointScope {
     {
         if(value == null)
             return false;
-        String thing = value.toString();
+        String thing = String.valueOf(value);
         switch (type) {
             case "int":
                 try {
@@ -106,7 +106,7 @@ public class SavepointScope {
             return "double";
         }
         if (value.getClass() == Boolean.class){
-            return "boolean";
+            return "bool";
         }
         return null;
     }

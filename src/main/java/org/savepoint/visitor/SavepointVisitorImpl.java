@@ -2,6 +2,7 @@ package org.savepoint.visitor;
 
 
 import org.antlr.v4.runtime.tree.RuleNode;
+import org.savepoint.visitor.exceptions.SavepointWrongFunctionTypeException;
 
 import java.util.*;
 import java.io.File;
@@ -377,8 +378,10 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         ReturnValue value= (ReturnValue)this.visitFunctionBody(function.functionBody());
         currentScope = scopeStack.pop();
         currentArrayScope = arrayScopeStack.pop();
-
-        return value.getValue() ;
+        if(SavepointScope.evalType(function.TYPE().getText(), value.value())){
+            return value.getValue() ;
+        }
+        else throw new SavepointWrongFunctionTypeException(function.TYPE().getText());
     }
 
     @Override
