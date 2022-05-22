@@ -4,11 +4,13 @@ package org.savepoint.visitor;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.savepoint.visitor.exceptions.SavepointWrongFunctionTypeException;
 
+import java.io.IOException;
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Stack;
+import java.io.FileWriter;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
@@ -106,7 +108,28 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) { //TODO: implement write to file call
-        return super.visitWriteFunctionCall(ctx);
+        String location = ctx.STRING().getText().replaceAll("\"", "");
+        String value = (String)visit(ctx.expression());
+        try {
+            File file = new File(location);
+            if (file.createNewFile()) {
+                System.out.println("it worked");
+                FileWriter writer = new FileWriter(location);
+                writer.write(value);
+                writer.close();
+            } else {
+                System.out.println("it did not");
+                FileWriter writer = new FileWriter(location);
+                writer.write(value);
+                writer.close();
+            }
+        }
+        catch(IOException ex) {
+            System.out.println("fuck! " + ex.getMessage());
+        }
+
+
+        return null;
     }
 
     @Override
