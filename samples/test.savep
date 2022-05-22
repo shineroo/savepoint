@@ -1,4 +1,4 @@
-int n = 32;
+double n = 32;
 
 int[n] masyv;
 
@@ -7,7 +7,12 @@ for(int i = 0; i<10; i++)
     masyv[i] = i*i;
 }
 
+
 for(int i = 0; i<10; i++)
 {
     WriteLine(masyv[i]);
 }
+
+WriteLine("--");
+masyv[23] = 455;
+WriteLine(masyv[23]);

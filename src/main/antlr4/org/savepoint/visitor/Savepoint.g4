@@ -92,7 +92,7 @@ expression
  : constant                                             #constantExpression
  | negativeConstant                                     #negativeConstantExpression
  | IDENTIFIER                                           #identifierExpression
- | IDENTIFIER'['(expression|INTEGER)']'                 #arrayIdentifierExpression
+ | IDENTIFIER'['(INTEGER|expression)']'                 #arrayIdentifierExpression
  | '(' expression ')'                                   #parenthesesExpression
  | booleanUnaryOp expression                            #booleanUnaryOpExpression
  | expression booleanBinaryOp expression                #booleanBinaryOpExpression

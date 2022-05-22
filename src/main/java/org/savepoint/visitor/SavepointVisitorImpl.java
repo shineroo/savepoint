@@ -2,6 +2,7 @@ package org.savepoint.visitor;
 
 
 import org.antlr.v4.runtime.tree.RuleNode;
+import org.savepoint.visitor.exceptions.SavepointVariableIncorrectFormat;
 import org.savepoint.visitor.exceptions.SavepointWrongFunctionTypeException;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             index = Integer.parseInt(ctx.INTEGER().getText());
         else if(ctx.expression() !=null && SavepointScope.evalType("int", visit(ctx.expression())))
             index = (Integer)currentScope.resolveVariable(ctx.expression().getText());
-
+        else throw new SavepointVariableIncorrectFormat(ctx.expression().getText());
         String type = ctx.TYPE().getText();
         String name = ctx.IDENTIFIER().getText();
         currentArrayScope.declareArray(name, index, type);
@@ -90,13 +91,16 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitArrayElementDeclaration(SavepointParser.ArrayElementDeclarationContext ctx) {
         int index = 0;
+        int which = 0;
         if(ctx.INTEGER()!=null)
             index = Integer.parseInt(ctx.INTEGER().getText());
-        else if(ctx.expression(0) !=null && SavepointScope.evalType("int", visit(ctx.expression(0))))
-            index = (Integer)currentScope.resolveVariable(ctx.expression(0).getText());
-
+        else if(ctx.expression(0) !=null && SavepointScope.evalType("int", visit(ctx.expression(0)))) {
+            index = (Integer) currentScope.resolveVariable(ctx.expression(0).getText());
+            which = 1;
+        }
+        else throw new SavepointVariableIncorrectFormat(ctx.expression(which).getText());
         String name = ctx.IDENTIFIER().getText();
-        Object value = visit(ctx.expression(1));
+        Object value = visit(ctx.expression(which));
         currentArrayScope.changeElement(name, index, value);
         return null;
     }
@@ -108,7 +112,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             index = Integer.parseInt(ctx.INTEGER().getText());
         else if(ctx.expression() !=null && SavepointScope.evalType("int", visit(ctx.expression())))
             index = (Integer)currentScope.resolveVariable(ctx.expression().getText());
-
+        else throw new SavepointVariableIncorrectFormat(ctx.expression().getText());
         return this.currentArrayScope.resolveArrayItem(ctx.IDENTIFIER().getText(), index);
     }
 
