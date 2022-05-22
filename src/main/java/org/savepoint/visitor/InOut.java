@@ -1,5 +1,7 @@
 package org.savepoint.visitor;
 
+import org.savepoint.visitor.exceptions.SavepointException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -25,9 +27,9 @@ public class InOut {
         }
         catch(FileNotFoundException ex){
             System.out.println(ex.getMessage());
+            throw new SavepointException("File not found.");
             //SavepointVisitorImpl.SYSTEM_OUT.append(ex.getMessage()).append("\n");
         }
-        return null;
     }
 
     public static void writeFile(String string, String fileName) {

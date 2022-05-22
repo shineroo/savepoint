@@ -1,6 +1,7 @@
 package org.savepoint.visitor;
 
 import org.antlr.v4.runtime.misc.Pair;
+import org.savepoint.visitor.exceptions.SavepointException;
 import org.savepoint.visitor.exceptions.SavepointVariableAlreadyDeclaredException;
 import org.savepoint.visitor.exceptions.SavepointVariableIncorrectFormat;
 import org.savepoint.visitor.exceptions.SavepointVariableNotDeclaredException;
@@ -44,8 +45,13 @@ public class SavepointScope {
 
     private JSONObject getJsonData()
     {
-        String json = InOut.readFile("samples/vardata.json");
-        assert json != null;
+        String json = "";
+        try{
+        json = InOut.readFile("vardata.json");}
+        catch(SavepointException ex){
+            InOut.writeFile("{}", "vardata.json");
+            json = InOut.readFile("vardata.json");
+        }
         return new JSONObject(json);
     }
 
@@ -56,7 +62,7 @@ public class SavepointScope {
             if(values.b.b)
                 putJsonData(key, values.b.a, values.a);
         }
-        InOut.writeFile(vardata.toString(), "samples/vardata.json");
+        InOut.writeFile(vardata.toString(), "vardata.json");
     }
 
     private void putJsonData(String name, String type, Object value)

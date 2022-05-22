@@ -1,3 +1,5 @@
+SP int temp <<< 11;
+
 double n = 32;
 
 int[n] masyv;
@@ -8,9 +10,9 @@ for(int i = 0; i<10; i++)
 }
 
 
-for(int i = 0; i<10; i++)
+for(masyv[1]; masyv[1]<10; masyv[1]=masyv[1]+1)
 {
-    WriteLine(masyv[i]);
+    WriteLine(masyv[1]);
 }
 
 WriteLine("--");
