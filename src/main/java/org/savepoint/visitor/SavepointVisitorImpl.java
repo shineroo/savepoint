@@ -111,6 +111,22 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNegativeConstant(SavepointParser.NegativeConstantContext ctx) {
+        if(ctx.INTEGER()!=null){
+            return Integer.parseInt("-"+ctx.INTEGER().getText());
+        }
+        if(ctx.DECIMAL()!=null){
+            return Double.parseDouble("-"+ctx.DECIMAL().getText());
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitNegativeConstantExpression(SavepointParser.NegativeConstantExpressionContext ctx) {
+        return super.visitNegativeConstantExpression(ctx);
+    }
+
+    @Override
     public Object visitConstant(SavepointParser.ConstantContext ctx) {
         if (ctx.INTEGER() != null)
             return Integer.parseInt(ctx.INTEGER().getText());
