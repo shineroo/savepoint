@@ -14,6 +14,7 @@ public class SavepointScope {
     private final Map<String, Pair<Object, Pair<String, Boolean>>> symbols = new HashMap<>();
     private final SavepointScope parent;
 
+    private JSONObject vardata = new JSONObject();
 
     public SavepointScope(SavepointScope parent) {
         this.parent = parent;
@@ -21,7 +22,9 @@ public class SavepointScope {
     public SavepointScope()
     {
         this.parent = null;
+        vardata = getJsonData();
     }
+
 
     public void declareVariable(String type, String variableName, Object value)
     {
@@ -38,25 +41,46 @@ public class SavepointScope {
         return parent != null && parent.isAlreadyDeclared(variableName);
     }
 
-    public void declareSPvariable(String type, String name, Object value)
+    private JSONObject getJsonData()
     {
         String json = InOut.readFile("samples/vardata.json");
         assert json != null;
-        JSONObject obj = new JSONObject(json);
+        return new JSONObject(json);
+    }
+
+    public void printJsonData()
+    {
+        for(var key : symbols.keySet()) {
+            var values = symbols.get(key);
+            if(values.b.b)
+                putJsonData(key, values.b.a, values.a);
+        }
+        InOut.writeFile(vardata.toString(), "samples/vardata.json");
+    }
+
+    private void putJsonData(String name, String type, Object value)
+    {
+        var newVar = new JSONObject();
+        newVar.put("type", type);
+        newVar.put("value", value);
+        vardata.put(name, newVar);
+    }
+
+    public void declareSPvariable(String type, String name, Object value)
+    {
+        if(isAlreadyDeclared(name))
+            throw new SavepointVariableAlreadyDeclaredException(name);
+        JSONObject obj = getJsonData();
         try{
             var tempVar = obj.getJSONObject(name);
-            symbols.put(name, new Pair(tempVar.getString("value"), new Pair(tempVar.getString("type"), true)));
+            symbols.put(name, new Pair(tempVar.get("value"), new Pair(tempVar.getString("type"), true)));
             return;
         }
         catch(JSONException ex){
             if(!evalType(type, value))
                 throw new SavepointVariableIncorrectFormat(name);
             symbols.put(name, new Pair(value, new Pair(type, true)));
-            var newVar = new JSONObject();
-            newVar.put("type", type);
-            newVar.put("value", value);
-            obj.put(name, newVar);
-            //TODO: print to file
+            putJsonData(name, type, value);
         }
     }
 
@@ -67,10 +91,11 @@ public class SavepointScope {
             throw new SavepointVariableNotDeclaredException(variableName);
 
         if(symbols.containsKey(variableName)) {
+            boolean special = symbols.get(variableName).b.b;
             String type = symbols.get(variableName).b.a;
             if (!evalType(type, value))
                 throw new SavepointVariableIncorrectFormat(variableName);
-            symbols.put(variableName, new Pair(value, new Pair(type, false)));
+            symbols.put(variableName, new Pair(value, new Pair(type, special)));
         }
         else {
             assert parent != null;

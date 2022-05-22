@@ -49,6 +49,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     public Object visitProgram(SavepointParser.ProgramContext ctx) {
         super.visitProgram(ctx);
         System.out.println("end of file");
+        currentScope.printJsonData();
         return SYSTEM_OUT.toString();
     }
 

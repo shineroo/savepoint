@@ -2,4 +2,9 @@ SP int kazkas <<< 389;
 
 
 WriteLine(kazkas);
+kazkas++;
+WriteLine(kazkas);
 WriteLine("tesiam programa...");
+
+int number = 123;
+FileWriteAllLines(number == 12, "samples/text.txt");
