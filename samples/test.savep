@@ -1,5 +1,9 @@
-SP int kazkas <<< 389;
 SP double dvigubas <<< 15.45;
+SP int test <<< 14;
 
-dvigubas = dvigubas+2;
+WriteLine(test);
+test = 15;
+WriteLine(test);
+WriteLine(dvigubas);
+dvigubas = 5.436;
 WriteLine(dvigubas);

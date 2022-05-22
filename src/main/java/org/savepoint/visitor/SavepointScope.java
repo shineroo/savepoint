@@ -22,7 +22,7 @@ public class SavepointScope {
     public SavepointScope()
     {
         this.parent = null;
-        vardata = getJsonData();
+        //vardata = getJsonData();
     }
 
 
@@ -74,7 +74,7 @@ public class SavepointScope {
         try{
             var tempVar = obj.getJSONObject(name);
             symbols.put(name, new Pair(tempVar.get("value"), new Pair(tempVar.getString("type"), true)));
-            return;
+            putJsonData(name, tempVar.getString("type"), tempVar.get("value"));
         }
         catch(JSONException ex){
             if(!evalType(type, value))
