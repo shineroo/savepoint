@@ -14,7 +14,7 @@ import java.io.FileWriter;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
-    public final static StringBuilder SYSTEM_OUT = new StringBuilder();
+    public final StringBuilder SYSTEM_OUT = new StringBuilder();
 
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
@@ -48,7 +48,6 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitProgram(SavepointParser.ProgramContext ctx) {
         super.visitProgram(ctx);
-        System.out.println("end of file");
         currentScope.printJsonData();
         return SYSTEM_OUT.toString();
     }

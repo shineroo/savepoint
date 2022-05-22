@@ -25,7 +25,7 @@ public class InOut {
         }
         catch(FileNotFoundException ex){
             System.out.println(ex.getMessage());
-            SavepointVisitorImpl.SYSTEM_OUT.append(ex.getMessage()).append("\n");
+            //SavepointVisitorImpl.SYSTEM_OUT.append(ex.getMessage()).append("\n");
         }
         return null;
     }

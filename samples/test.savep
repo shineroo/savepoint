@@ -1,10 +1,5 @@
 SP int kazkas <<< 389;
+SP double dvigubas <<< 15.45;
 
-
-WriteLine(kazkas);
-kazkas++;
-WriteLine(kazkas);
-WriteLine("tesiam programa...");
-
-int number = 123;
-FileWriteAllLines(number == 12, "samples/text.txt");
+dvigubas = dvigubas+2;
+WriteLine(dvigubas);
