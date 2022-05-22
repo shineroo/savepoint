@@ -328,6 +328,9 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         ReturnValue value= (ReturnValue)this.visitFunctionBody(function.functionBody());
         currentScope = scopeStack.pop();
         currentArrayScope = arrayScopeStack.pop();
+        if(function.TYPE()==null){
+            return null;
+        }
         if(SavepointScope.evalType(function.TYPE().getText(), value.value())){
             return value.getValue() ;
         }
