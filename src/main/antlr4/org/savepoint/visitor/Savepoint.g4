@@ -56,12 +56,12 @@ functionCall
 
 systemFunctionCall
  : PRINT '(' expression ')'                             #printFunctionCall
- | WRITE '(' expression',' STRING ')'                   #writeFunctionCall
- | APPEND '(' expression',' STRING ')'                  #appendFunctionCall
+ | WRITE '(' expression',' expression ')'                   #writeFunctionCall
+ | APPEND '(' expression',' expression ')'                  #appendFunctionCall
  ;
 
 systemFunctionCall1
-: READ '(' IDENTIFIER ')'                              #readFunctionCall
+: READ '(' expression ')'                              #readFunctionCall
 ;
 
 ifElseStatement: 'if' '(' expression ')' block ('else' block)?;

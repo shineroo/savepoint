@@ -86,14 +86,14 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitReadFunctionCall(SavepointParser.ReadFunctionCallContext ctx) {
-        String location = currentScope.resolveVariable(ctx.IDENTIFIER().getText()).toString().replaceAll("\"", "");
+        String location = visit(ctx.expression()).toString().replaceAll("\"", "");
         return InOut.readFile(location);
     }
 
     @Override
     public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) {
-        String location = ctx.STRING().getText().replaceAll("\"", "");
-        String value = visit(ctx.expression()).toString().replaceAll("\"", "");
+        String value = visit(ctx.expression(0)).toString().replaceAll("\"", "");
+        String location = visit(ctx.expression(1)).toString().replaceAll("\"", "");
         InOut.writeFile(value, location);
 
         return null;
@@ -101,8 +101,8 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitAppendFunctionCall(SavepointParser.AppendFunctionCallContext ctx) { //TODO: implement append to file call
-        String location = ctx.STRING().getText().replaceAll("\"", "");
-        String value = visit(ctx.expression()).toString().replaceAll("\"", "");
+        String value = visit(ctx.expression(0)).toString().replaceAll("\"", "");
+        String location = visit(ctx.expression(1)).toString().replaceAll("\"", "");
         InOut.appendFile(value, location);
 
         return null;
