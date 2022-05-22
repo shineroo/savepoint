@@ -85,8 +85,12 @@ loopW
 expressionList
 : expression (',' expression)* ;
 
+negativeConstant
+: '-' INTEGER | '-' DECIMAL;
+
 expression
  : constant                                             #constantExpression
+ | negativeConstant                                     #negativeConstantExpression
  | IDENTIFIER                                           #identifierExpression
  | IDENTIFIER'['INTEGER']'                              #arrayIdentifierExpression
  | '(' expression ')'                                   #parenthesesExpression
@@ -118,8 +122,8 @@ APPEND : 'FileAppendAllLines';
 
 LOOP : 'while';
 FORLOOP : 'for';
-INTEGER : '-'?[0-9]+ ;
-DECIMAL : '-'?[0-9]+ '.' [0-9]+ ;
+INTEGER : [0-9]+ ;
+DECIMAL : [0-9]+ '.' [0-9]+ ;
 BOOLEAN : 'true' | 'false' ;
 STRING : ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["] ;
 TYPE : ('int' | 'double' | 'bool' | 'string');
