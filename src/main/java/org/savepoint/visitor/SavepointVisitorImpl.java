@@ -273,6 +273,8 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
                 break;
             try{visitAssignment(ctx.assignment());}
             catch(NullPointerException ignored){}
+            try{visitArrayElementDeclaration(ctx.arrayElementDeclaration());}
+            catch(NullPointerException ignored){}
             try{visitIncrement(ctx.increment());}
             catch(NullPointerException ignored){}
             try{visitDecrement(ctx.decrement());}

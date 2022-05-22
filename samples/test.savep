@@ -1,12 +1,10 @@
-SP double dvigubas <<< 15.45;
-SP int test <<< 14;
-SP bool ar <<< true;
+int[25] mas;
 
-if(true)
+mas[14] = 4;
+mas[15] = 10;
+mas[16] = 1;
+
+for(mas[14]; mas[14]<mas[15]; mas[14]=mas[14]+mas[16])
 {
-
-    SP int kazkas <<< 1;
-    WriteLine(kazkas);
-    WriteLine(dvigubas);
-    dvigubas = 1;
+    WriteLine(mas[14]);
 }
