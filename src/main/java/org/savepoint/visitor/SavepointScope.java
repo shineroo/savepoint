@@ -71,7 +71,7 @@ public class SavepointScope {
     {
         if(isAlreadyDeclared(name))
             throw new SavepointVariableAlreadyDeclaredException(name);
-        if(evalType(type, value))
+        if(!evalType(type, value))
             throw new SavepointVariableIncorrectFormat(name);
         JSONObject obj = getJsonData();
         try{

@@ -5,5 +5,5 @@ WriteLine(test);
 test = 15;
 WriteLine(test);
 WriteLine(dvigubas);
-dvigubas = 5.436;
+
 WriteLine(dvigubas);
