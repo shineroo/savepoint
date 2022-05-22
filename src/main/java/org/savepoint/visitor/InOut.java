@@ -39,7 +39,27 @@ public class InOut {
             writer.close();
         }
         catch(IOException ex) {
-            System.out.println("fuck! " + ex.getMessage());
+            System.out.println("damn! " + ex.getMessage());
+        }
+    }
+
+    public static void appendFile(String string, String fileName) {
+        try {
+            File file = new File(fileName);
+            if(file.createNewFile()){
+                writeFile(string, fileName);
+            }
+            else {
+                String fileText = readFile(fileName);
+                StringBuilder allFile = new StringBuilder();
+                allFile.append(fileText);
+                allFile.append("\n");
+                allFile.append(string);
+                writeFile(allFile.toString(), fileName);
+            }
+        }
+        catch(IOException ex) {
+            System.out.println("damn! " + ex.getMessage());
         }
     }
 }

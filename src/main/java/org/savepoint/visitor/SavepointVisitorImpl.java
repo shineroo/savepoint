@@ -86,23 +86,26 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitReadFunctionCall(SavepointParser.ReadFunctionCallContext ctx) {
-
         String location = currentScope.resolveVariable(ctx.IDENTIFIER().getText()).toString().replaceAll("\"", "");
         return InOut.readFile(location);
     }
 
     @Override
-    public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) { //TODO: implement write to file call
+    public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) {
         String location = ctx.STRING().getText().replaceAll("\"", "");
-        Object value = visit(ctx.expression()).toString();
-        InOut.writeFile(value.toString(), location);
+        String value = visit(ctx.expression()).toString().replaceAll("\"", "");
+        InOut.writeFile(value, location);
 
         return null;
     }
 
     @Override
     public Object visitAppendFunctionCall(SavepointParser.AppendFunctionCallContext ctx) { //TODO: implement append to file call
-        return super.visitAppendFunctionCall(ctx);
+        String location = ctx.STRING().getText().replaceAll("\"", "");
+        String value = visit(ctx.expression()).toString().replaceAll("\"", "");
+        InOut.appendFile(value, location);
+
+        return null;
     }
 
     @Override
