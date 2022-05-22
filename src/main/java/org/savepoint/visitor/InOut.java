@@ -3,6 +3,8 @@ package org.savepoint.visitor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class InOut {
 
@@ -26,5 +28,18 @@ public class InOut {
             SavepointVisitorImpl.SYSTEM_OUT.append(ex.getMessage()).append("\n");
         }
         return null;
+    }
+
+    public static void writeFile(String string, String fileName) {
+        try {
+            File file = new File(fileName);
+            file.createNewFile();
+            FileWriter writer = new FileWriter(fileName);
+            writer.write(string);
+            writer.close();
+        }
+        catch(IOException ex) {
+            System.out.println("fuck! " + ex.getMessage());
+        }
     }
 }

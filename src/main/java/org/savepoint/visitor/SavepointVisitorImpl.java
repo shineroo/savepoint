@@ -94,25 +94,8 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitWriteFunctionCall(SavepointParser.WriteFunctionCallContext ctx) { //TODO: implement write to file call
         String location = ctx.STRING().getText().replaceAll("\"", "");
-        String value = (String)visit(ctx.expression());
-        try {
-            File file = new File(location);
-            if (file.createNewFile()) {
-                System.out.println("it worked");
-                FileWriter writer = new FileWriter(location);
-                writer.write(value);
-                writer.close();
-            } else {
-                System.out.println("it did not");
-                FileWriter writer = new FileWriter(location);
-                writer.write(value);
-                writer.close();
-            }
-        }
-        catch(IOException ex) {
-            System.out.println("fuck! " + ex.getMessage());
-        }
-
+        Object value = visit(ctx.expression()).toString();
+        InOut.writeFile(value.toString(), location);
 
         return null;
     }
