@@ -75,7 +75,7 @@ decrement: IDENTIFIER '--';
 constant: INTEGER | DECIMAL | BOOLEAN |STRING ;
 
 loopF
-: FORLOOP '(' (statement | IDENTIFIER';') expression';'(assignment | increment | decrement) ')' block;
+: FORLOOP '(' (statement | IDENTIFIER';'| IDENTIFIER'['INTEGER']'';') expression';'(assignment | arrayElementDeclaration | increment | decrement) ')' block;
 
 loopW
 : LOOP '(' expression ')' block;

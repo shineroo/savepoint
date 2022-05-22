@@ -1,9 +1,10 @@
-SP double dvigubas <<< 15.45;
-SP int test <<< 14;
+int[25] mas;
 
-WriteLine(test);
-test = 15;
-WriteLine(test);
-WriteLine(dvigubas);
+mas[14] = 4;
+mas[15] = 10;
+mas[16] = 1;
 
-WriteLine(dvigubas);
+for(mas[14]; mas[14]<mas[15]; mas[14]=mas[14]+mas[16])
+{
+    WriteLine(mas[14]);
+}

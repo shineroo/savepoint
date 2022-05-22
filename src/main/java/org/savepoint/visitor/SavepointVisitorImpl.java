@@ -32,6 +32,11 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBooleanUnaryOpExpression(SavepointParser.BooleanUnaryOpExpressionContext ctx) {
+        return !(boolean)visit(ctx.expression());
+    }
+
+    @Override
     public Object visitNumericAddOpExpression(SavepointParser.NumericAddOpExpressionContext ctx) {
         Object val1 = visit(ctx.expression(0));
         Object val2 = visit(ctx.expression(1));
@@ -267,6 +272,8 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
             if(value!=null)
                 break;
             try{visitAssignment(ctx.assignment());}
+            catch(NullPointerException ignored){}
+            try{visitArrayElementDeclaration(ctx.arrayElementDeclaration());}
             catch(NullPointerException ignored){}
             try{visitIncrement(ctx.increment());}
             catch(NullPointerException ignored){}
