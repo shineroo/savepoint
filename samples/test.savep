@@ -24,12 +24,9 @@ int test(int n){
     return test(n+1)+test(n+2);
 }
 
-int test2(){
 
-}
 
 int pirmas = 9;
 int antras = 3;
 calc(pirmas, antras);
 WriteLine(test(6));
-test2();

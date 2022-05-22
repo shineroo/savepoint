@@ -19,7 +19,29 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     private final Stack<ArrayScope> arrayScopeStack = new Stack<>();
     private ArrayScope currentArrayScope = new ArrayScope();
 
+
     private final Map<String, SavepointParser.FunctionDeclarationContext> functions=new HashMap<>();
+
+    @Override
+    public Object visitComparisonExpression(SavepointParser.ComparisonExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        return VisitorMathOps.visitComparisonExpression(ctx, val1, val2);
+    }
+
+    @Override
+    public Object visitNumericAddOpExpression(SavepointParser.NumericAddOpExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        return VisitorMathOps.visitNumericAddOpExpression(ctx, val1, val2);
+    }
+
+    @Override
+    public Object visitNumericMultiOpExpression(SavepointParser.NumericMultiOpExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        return VisitorMathOps.visitNumericMultiOpExpression(ctx, val1, val2);
+    }
 
     @Override
     public Object visitProgram(SavepointParser.ProgramContext ctx) {
@@ -133,100 +155,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         return this.currentScope.resolveVariable(ctx.IDENTIFIER().getText());
     }
 
-    @Override
-    public Object visitNumericAddOpExpression(SavepointParser.NumericAddOpExpressionContext ctx) {
-        Object val1 = visit(ctx.expression(0));
-        Object val2 = visit(ctx.expression(1));
 
-        switch(SavepointScope.autism(val1, val2)){
-            case "int" -> {
-                return switch (ctx.numericAddOp().getText()) {
-                    case "+" -> (Integer) val1 + (Integer) val2;
-                    case "-" -> (Integer) val1 - (Integer) val2;
-                    default -> null;
-                };
-            }
-            case "double" -> {
-                double first = Double.parseDouble(val1.toString());
-                double second = Double.parseDouble(val2.toString());
-                return switch (ctx.numericAddOp().getText()) {
-                    case "+" -> first+second;
-                    case "-" -> first-second;
-                    default -> null;
-                };
-            }
-            case "string" -> {
-                if (ctx.numericAddOp().getText().equals("+"))
-                    return val1 + val2.toString();
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitNumericMultiOpExpression(SavepointParser.NumericMultiOpExpressionContext ctx) {
-        Object val1 = visit(ctx.expression(0));
-        Object val2 = visit(ctx.expression(1));
-
-        switch(SavepointScope.autism(val1, val2)) {
-            case "int" -> {
-                return switch (ctx.numericMultiOp().getText()) {
-                    case "*" -> (Integer)val1*(Integer) val2;
-                    case "/" -> (Integer)val1/(Integer) val2;
-                    case "%" -> (Integer)val1%(Integer) val2;
-                    default -> null;
-                };
-            }
-            case "double" -> {
-                double first = Double.parseDouble(val1.toString());
-                double second = Double.parseDouble(val2.toString());
-                return switch (ctx.numericMultiOp().getText()) {
-                    case "*" -> first*second;
-                    case "/" -> first/second;
-                    case "%" -> first%second;
-                    default -> null;
-                };
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitComparisonExpression(SavepointParser.ComparisonExpressionContext ctx) {
-        Object val1 = visit(ctx.expression(0));
-        Object val2 = visit(ctx.expression(1));
-
-        if (SavepointScope.getType(val1).equals(SavepointScope.getType(val2))){  // maybe like this
-            switch(SavepointScope.getType(val1)) {
-                case "int" -> {
-                    return switch (ctx.booleanCompareOp().getText()) {
-                        case "==" -> val1.equals(val2);
-                        case "!=" -> !val1.equals(val2);
-                        case ">" -> ((Integer)val1) > ((Integer)val2);
-                        case ">=" -> ((Integer)val1) >= ((Integer)val2);
-                        case "<" -> ((Integer)val1) < ((Integer)val2);
-                        case "<=" -> ((Integer)val1) <= ((Integer)val2);
-                        default -> null;
-                    };
-                }
-                case "double" -> {
-                    double first = Double.parseDouble(val1.toString());
-                    double second = Double.parseDouble(val2.toString());
-                    return switch (ctx.booleanCompareOp().getText()) {
-                        case "==" -> (first) == (second);
-                        case "!=" -> (first)!=(second);
-                        case ">" -> (first) > (second);
-                        case ">=" -> (first) >= (second);
-                        case "<" -> (first) < (second);
-                        case "<=" -> (first) <= (second);
-                        default -> null;
-                    };
-                }
-            }
-        }
-        return false;
-    }
 
     @Override
     public Object visitParenthesesExpression(SavepointParser.ParenthesesExpressionContext ctx) {
