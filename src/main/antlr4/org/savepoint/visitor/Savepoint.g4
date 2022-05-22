@@ -42,10 +42,10 @@ variableDeclaration
 : TYPE IDENTIFIER '=' expression;
 
 arrayDeclaration
-: TYPE'['INTEGER']' IDENTIFIER;
+: TYPE'[' (INTEGER | expression) ']' IDENTIFIER;
 
 arrayElementDeclaration
-: IDENTIFIER'['INTEGER']' '=' expression;
+: IDENTIFIER'[' (INTEGER | expression) ']' '=' expression;
 
 assignment
  : IDENTIFIER '=' expression
@@ -92,7 +92,7 @@ expression
  : constant                                             #constantExpression
  | negativeConstant                                     #negativeConstantExpression
  | IDENTIFIER                                           #identifierExpression
- | IDENTIFIER'['INTEGER']'                              #arrayIdentifierExpression
+ | IDENTIFIER'['(expression|INTEGER)']'                 #arrayIdentifierExpression
  | '(' expression ')'                                   #parenthesesExpression
  | booleanUnaryOp expression                            #booleanUnaryOpExpression
  | expression booleanBinaryOp expression                #booleanBinaryOpExpression

@@ -1,30 +1,13 @@
-int[25] mas;
+int n = 32;
 
-mas[14] = 4;
-mas[15] = 10;
-mas[16] = 1;
+int[n] masyv;
 
-if(true && false){
-    WriteLine("t&f");
-}
-if(true && true){
-    WriteLine("t&t");
-}
-if(false && false){
-    WriteLine("f&f");
-}
-
-if(true || false){
-    WriteLine("t|f");
-}
-if(true || true){
-    WriteLine("t|t");
-}
-if(false || false){
-    WriteLine("f|f");
-}
-
-for(mas[14]; mas[14]<mas[15]; mas[14]=mas[14]+mas[16])
+for(int i = 0; i<10; i++)
 {
-    WriteLine(mas[14]);
+    masyv[i] = i*i;
+}
+
+for(int i = 0; i<10; i++)
+{
+    WriteLine(masyv[i]);
 }

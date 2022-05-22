@@ -75,25 +75,41 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitArrayDeclaration(SavepointParser.ArrayDeclarationContext ctx) {
-        int length = Integer.parseInt(ctx.INTEGER().getText());
+        int index = 0;
+        if(ctx.INTEGER()!=null)
+            index = Integer.parseInt(ctx.INTEGER().getText());
+        else if(ctx.expression() !=null && SavepointScope.evalType("int", visit(ctx.expression())))
+            index = (Integer)currentScope.resolveVariable(ctx.expression().getText());
+
         String type = ctx.TYPE().getText();
         String name = ctx.IDENTIFIER().getText();
-        currentArrayScope.declareArray(name, length, type);
+        currentArrayScope.declareArray(name, index, type);
         return null;
     }
 
     @Override
     public Object visitArrayElementDeclaration(SavepointParser.ArrayElementDeclarationContext ctx) {
-        int index = Integer.parseInt(ctx.INTEGER().getText());
+        int index = 0;
+        if(ctx.INTEGER()!=null)
+            index = Integer.parseInt(ctx.INTEGER().getText());
+        else if(ctx.expression(0) !=null && SavepointScope.evalType("int", visit(ctx.expression(0))))
+            index = (Integer)currentScope.resolveVariable(ctx.expression(0).getText());
+
         String name = ctx.IDENTIFIER().getText();
-        Object value = visit(ctx.expression());
+        Object value = visit(ctx.expression(1));
         currentArrayScope.changeElement(name, index, value);
         return null;
     }
 
     @Override
     public Object visitArrayIdentifierExpression(SavepointParser.ArrayIdentifierExpressionContext ctx) {
-        return this.currentArrayScope.resolveArrayItem(ctx.IDENTIFIER().getText(), Integer.parseInt(ctx.INTEGER().getText()));
+        int index = 0;
+        if(ctx.INTEGER()!=null)
+            index = Integer.parseInt(ctx.INTEGER().getText());
+        else if(ctx.expression() !=null && SavepointScope.evalType("int", visit(ctx.expression())))
+            index = (Integer)currentScope.resolveVariable(ctx.expression().getText());
+
+        return this.currentArrayScope.resolveArrayItem(ctx.IDENTIFIER().getText(), index);
     }
 
     @Override
