@@ -26,7 +26,7 @@ statement
  ;
 
 functionDeclaration
-: TYPE IDENTIFIER '(' paramList? ')' functionBody ;
+: (TYPE | 'void') IDENTIFIER '(' paramList? ')' functionBody ;
 
 paramList : TYPE IDENTIFIER (',' TYPE IDENTIFIER)* ;
 
