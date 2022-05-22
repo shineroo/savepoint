@@ -70,6 +70,8 @@ public class SavepointScope {
     {
         if(isAlreadyDeclared(name))
             throw new SavepointVariableAlreadyDeclaredException(name);
+        if(evalType(type, value))
+            throw new SavepointVariableIncorrectFormat(name);
         JSONObject obj = getJsonData();
         try{
             var tempVar = obj.getJSONObject(name);
@@ -77,8 +79,6 @@ public class SavepointScope {
             putJsonData(name, tempVar.getString("type"), tempVar.get("value"));
         }
         catch(JSONException ex){
-            if(!evalType(type, value))
-                throw new SavepointVariableIncorrectFormat(name);
             symbols.put(name, new Pair(value, new Pair(type, true)));
             putJsonData(name, type, value);
         }
