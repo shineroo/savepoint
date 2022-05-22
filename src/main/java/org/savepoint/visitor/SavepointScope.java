@@ -5,6 +5,7 @@ import org.savepoint.visitor.exceptions.SavepointVariableAlreadyDeclaredExceptio
 import org.savepoint.visitor.exceptions.SavepointVariableIncorrectFormat;
 import org.savepoint.visitor.exceptions.SavepointVariableNotDeclaredException;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.*;
@@ -152,7 +153,7 @@ public class SavepointScope {
         if (value.getClass() == String.class){
             return "string";
         }
-        if (value.getClass() == Double.class){
+        if (value.getClass() == Double.class || value.getClass() == BigDecimal.class){
             return "double";
         }
         if (value.getClass() == Boolean.class){
