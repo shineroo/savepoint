@@ -1,9 +1,12 @@
 SP double dvigubas <<< 15.45;
 SP int test <<< 14;
+SP bool ar <<< true;
 
-WriteLine(test);
-test = 15;
-WriteLine(test);
-WriteLine(dvigubas);
+if(true)
+{
 
-WriteLine(dvigubas);
+    SP int kazkas <<< 1;
+    WriteLine(kazkas);
+    WriteLine(dvigubas);
+    dvigubas = 1;
+}
