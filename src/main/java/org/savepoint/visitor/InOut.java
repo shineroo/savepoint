@@ -51,11 +51,8 @@ public class InOut {
             }
             else {
                 String fileText = readFile(fileName);
-                StringBuilder allFile = new StringBuilder();
-                allFile.append(fileText);
-                allFile.append("\n");
-                allFile.append(string);
-                writeFile(allFile.toString(), fileName);
+                String allFile = fileText + "\n" + string;
+                writeFile(allFile, fileName);
             }
         }
         catch(IOException ex) {
