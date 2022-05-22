@@ -7,9 +7,11 @@ import org.savepoint.visitor.exceptions.SavepointVariableNotDeclaredException;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.json.*;
+
 
 public class SavepointScope {
-    private final Map<String, Pair<Object, String>> symbols = new HashMap<>();
+    private final Map<String, Pair<Object, Pair<String, Boolean>>> symbols = new HashMap<>();
     private final SavepointScope parent;
 
 
@@ -27,7 +29,7 @@ public class SavepointScope {
             throw new SavepointVariableAlreadyDeclaredException(variableName);
         if(!evalType(type, value))
             throw new SavepointVariableIncorrectFormat(variableName);
-        symbols.put(variableName, new Pair(value, type));
+        symbols.put(variableName, new Pair(value, new Pair(type, false)));
     }
 
     private boolean isAlreadyDeclared(String variableName){
@@ -36,16 +38,39 @@ public class SavepointScope {
         return parent != null && parent.isAlreadyDeclared(variableName);
     }
 
+    public void declareSPvariable(String type, String name, Object value)
+    {
+        String json = InOut.readFile("samples/vardata.json");
+        assert json != null;
+        JSONObject obj = new JSONObject(json);
+        try{
+            var tempVar = obj.getJSONObject(name);
+            symbols.put(name, new Pair(tempVar.getString("value"), new Pair(tempVar.getString("type"), true)));
+            return;
+        }
+        catch(JSONException ex){
+            if(!evalType(type, value))
+                throw new SavepointVariableIncorrectFormat(name);
+            symbols.put(name, new Pair(value, new Pair(type, true)));
+            var newVar = new JSONObject();
+            newVar.put("type", type);
+            newVar.put("value", value);
+            obj.put(name, newVar);
+            //TODO: print to file
+        }
+    }
+
+
     public void changeVariable(String variableName, Object value)
     {
         if(!isAlreadyDeclared(variableName))
             throw new SavepointVariableNotDeclaredException(variableName);
 
         if(symbols.containsKey(variableName)) {
-            String type = symbols.get(variableName).b;
+            String type = symbols.get(variableName).b.a;
             if (!evalType(type, value))
                 throw new SavepointVariableIncorrectFormat(variableName);
-            symbols.put(variableName, new Pair(value, type));
+            symbols.put(variableName, new Pair(value, new Pair(type, false)));
         }
         else {
             assert parent != null;

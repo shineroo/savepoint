@@ -11,6 +11,7 @@ program
 
 statement
  : variableDeclaration';'
+ | variableSPdeclaration';'
  | assignment';'
  | functionCall';'
  | systemFunctionCall';'
@@ -33,6 +34,9 @@ functionBody : '{' statement* '}' ; //TODO: cannot return from the middle of the
 
 returnStatement: 'return' expression? ;
 
+
+variableSPdeclaration
+: 'SP' TYPE IDENTIFIER '<<<' expression;
 
 variableDeclaration
 : TYPE IDENTIFIER '=' expression;

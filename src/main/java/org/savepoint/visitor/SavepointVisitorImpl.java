@@ -12,7 +12,7 @@ import java.util.Stack;
 
 public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
-    private final StringBuilder SYSTEM_OUT = new StringBuilder();
+    public final static StringBuilder SYSTEM_OUT = new StringBuilder();
 
     private final Stack<SavepointScope> scopeStack = new Stack<>();
     private SavepointScope currentScope = new SavepointScope();
@@ -46,6 +46,7 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     @Override
     public Object visitProgram(SavepointParser.ProgramContext ctx) {
         super.visitProgram(ctx);
+        System.out.println("end of file");
         return SYSTEM_OUT.toString();
     }
 
@@ -83,25 +84,9 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
 
     @Override
     public Object visitReadFunctionCall(SavepointParser.ReadFunctionCallContext ctx) {
-        try{
-            String location = currentScope.resolveVariable(ctx.IDENTIFIER().getText()).toString().replaceAll("\"", "");
-            File file = new File(location);
-            Scanner reader = new Scanner(file);
-            StringBuilder allFile = new StringBuilder();
-            while(reader.hasNextLine()){
-                String data = reader.nextLine();
-                allFile.append(data);
-                if(reader.hasNextLine())
-                    allFile.append("\n");
-            }
-            reader.close();
-            return allFile.toString();
-        }
-        catch(FileNotFoundException ex){
-            System.out.println(ex.getMessage());
-            SYSTEM_OUT.append(ex.getMessage()).append("\n");
-        }
-        return null;
+
+        String location = currentScope.resolveVariable(ctx.IDENTIFIER().getText()).toString().replaceAll("\"", "");
+        return InOut.readFile(location);
     }
 
     @Override
@@ -139,6 +124,16 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
         Object value = visit(ctx.expression());
 
         this.currentScope.declareVariable(ctx.TYPE().getText(), varName, value);
+        return null;
+    }
+
+    @Override
+    public Object visitVariableSPdeclaration(SavepointParser.VariableSPdeclarationContext ctx) {
+        String varName = ctx.IDENTIFIER().getText();
+        Object value = visit(ctx.expression());
+        String type = ctx.TYPE().getText();
+
+        currentScope.declareSPvariable(type, varName, value);
         return null;
     }
 

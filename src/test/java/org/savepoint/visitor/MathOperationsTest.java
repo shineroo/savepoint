@@ -85,7 +85,7 @@ public class MathOperationsTest {
 
         assertEquals(expected, actual);
     }
-
+    @Test
     void double_int_multiplication_addition_parenthesies() {
         String program = """
                 WriteLine(5.5*(7.3+(10+2)));

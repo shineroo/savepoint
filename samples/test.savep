@@ -1,32 +1,5 @@
-int calc(int a, int b)
-{
-    /*for(int abc = 0; abc< 7; abc++){
-        WriteLine(abc);
-        if(abc==3){
-            return 1;
-        }
-    }*/
-    int abc = 0;
-    while(abc<7)
-    {
-        WriteLine(abc);
-        if(abc==3){
-            return abc;
-        }
-        abc++;
-    }
-}
-
-int test(int n){
-    if(n>=8){
-        return n;
-    }
-    return test(n+1)+test(n+2);
-}
+SP int kazkas <<< 389;
 
 
-
-int pirmas = 9;
-int antras = 3;
-calc(pirmas, antras);
-WriteLine(test(6));
+WriteLine(kazkas);
+WriteLine("tesiam programa...");

@@ -1,0 +1,14 @@
+{
+	"kazkas":{
+		"type": "int",
+		"value": "156"
+	},
+	"belekas":{
+		"type": "int",
+		"value": "22"
+	},
+	"counter":{
+		"type": "string",
+		"value": "tavo tevas"
+	}
+}
