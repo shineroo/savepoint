@@ -1,5 +1,7 @@
 package org.savepoint.visitor;
 
+import java.util.Objects;
+
 public class VisitorMathOps {
 
 
@@ -86,5 +88,16 @@ public class VisitorMathOps {
             }
         }
         return false;
+    }
+
+    public static boolean visitBooleanBinaryOpExpression(SavepointParser.BooleanBinaryOpExpressionContext ctx, Object val1, Object val2) {
+        if(Objects.equals(ctx.booleanBinaryOp().getText(), "&&")) {
+            return (boolean) val1 && (boolean) val2;
+        }
+        else if(Objects.equals(ctx.booleanBinaryOp().getText(), "||"))
+        {
+            return (boolean) val1 || (boolean) val2;
+        }
+        else return false;
     }
 }

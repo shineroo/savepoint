@@ -37,6 +37,13 @@ public class SavepointVisitorImpl extends SavepointBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBooleanBinaryOpExpression(SavepointParser.BooleanBinaryOpExpressionContext ctx) {
+        Object val1 = visit(ctx.expression(0));
+        Object val2 = visit(ctx.expression(1));
+        return VisitorMathOps.visitBooleanBinaryOpExpression(ctx, val1, val2);
+    }
+
+    @Override
     public Object visitNumericAddOpExpression(SavepointParser.NumericAddOpExpressionContext ctx) {
         Object val1 = visit(ctx.expression(0));
         Object val2 = visit(ctx.expression(1));

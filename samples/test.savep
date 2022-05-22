@@ -4,6 +4,26 @@ mas[14] = 4;
 mas[15] = 10;
 mas[16] = 1;
 
+if(true && false){
+    WriteLine("t&f");
+}
+if(true && true){
+    WriteLine("t&t");
+}
+if(false && false){
+    WriteLine("f&f");
+}
+
+if(true || false){
+    WriteLine("t|f");
+}
+if(true || true){
+    WriteLine("t|t");
+}
+if(false || false){
+    WriteLine("f|f");
+}
+
 for(mas[14]; mas[14]<mas[15]; mas[14]=mas[14]+mas[16])
 {
     WriteLine(mas[14]);
